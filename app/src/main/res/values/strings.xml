@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">appsus</string>
+    <string name="app_name">List SUS</string>
+    <string name="menu_filtro">Filtro</string>
 </resources>

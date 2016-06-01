@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:yourapp="http://schemas.android.com/apk/res/android">
+
+    <item
+        yourapp:id="@+id/filtro"
+        yourapp:icon="@android:drawable/ic_menu_sort_by_size"
+        yourapp:title=""
+        app:showAsAction="always" />
+
+</menu>
