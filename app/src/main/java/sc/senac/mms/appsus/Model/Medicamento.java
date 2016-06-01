@@ -1,4 +1,4 @@
-package sc.senac.mms.appsus.Model;
+package sc.senac.mms.appsus.model;
 
 import android.content.ContentValues;
 

@@ -1,4 +1,4 @@
-package sc.senac.mms.appsus.Dao;
+package sc.senac.mms.appsus.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,8 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import sc.senac.mms.appsus.Model.ClasseFarmacologica;
-import sc.senac.mms.appsus.Model.Medicamento;
+import sc.senac.mms.appsus.model.ClasseFarmacologica;
+import sc.senac.mms.appsus.model.Medicamento;
 
 /**
  * Created by Milton on 23/05/2016.

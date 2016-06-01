@@ -1,4 +1,4 @@
-package sc.senac.mms.appsus.Ui;
+package sc.senac.mms.appsus.UI;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -13,13 +13,12 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import sc.senac.mms.appsus.Dao.ClasseFarmacologicaBD;
-import sc.senac.mms.appsus.Dao.MedicamentoBD;
-import sc.senac.mms.appsus.Dao.MySqlDao;
-import sc.senac.mms.appsus.Model.ClasseFarmacologica;
-import sc.senac.mms.appsus.Model.Medicamento;
+import sc.senac.mms.appsus.dao.ClasseFarmacologicaBD;
+import sc.senac.mms.appsus.dao.MedicamentoBD;
+import sc.senac.mms.appsus.dao.MySqlDao;
+import sc.senac.mms.appsus.model.ClasseFarmacologica;
+import sc.senac.mms.appsus.model.Medicamento;
 import sc.senac.mms.appsus.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     ListView listViewMedicamentos;
     EditText editTextPalavraDigitada;
     ArrayAdapter<Medicamento> arrayAdapterMedicamento;
-    MySqlDao mySqlDao;
+    MySqlDao dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,21 +41,22 @@ public class MainActivity extends AppCompatActivity {
         this.cadastraClasse();
         this.cadastraMedicamento();
         this.buscarMedicamentos();
-        ArrayList<Medicamento> list = new ArrayList<>();
+
+        ArrayList<Medicamento> list;
         list = this.buscarMedicamentos();
+
         arrayAdapterMedicamento = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
         listViewMedicamentos.setAdapter(arrayAdapterMedicamento);
         getAutoCompleteListView(editTextPalavraDigitada);
+
         try {
-            mySqlDao = new MySqlDao();
-            mySqlDao.getListaMedicamentoMySql();
+            dao = new MySqlDao();
+            dao.getListaMedicamentoMySql();
             System.out.println("Entro ");
         } catch (Exception e) {
             System.out.println("Erro" + e.getMessage());
 
         }
-
-
     }
 
     @Override
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
                 builderSingle.setTitle("Selecione uma classe farmacológica");
 
-                final ArrayAdapter<ClasseFarmacologica> arrayAdapter = new ArrayAdapter<ClasseFarmacologica>(
+                final ArrayAdapter<ClasseFarmacologica> arrayAdapter = new ArrayAdapter<>(
                         MainActivity.this,
                         android.R.layout.select_dialog_singlechoice, classeFarmacologicaBD.listarClasseFarmacologica());
 
@@ -111,8 +111,7 @@ public class MainActivity extends AppCompatActivity {
                                             public void onClick(
                                                     DialogInterface dialog,
                                                     int which) {
-                                                arrayAdapterMedicamento = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1,
-                                                        getMedicamentoPorClasseFarmacologica(classeFarm));
+                                                arrayAdapterMedicamento = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, getMedicamentoPorClasseFarmacologica(classeFarm));
 
                                                 listViewMedicamentos.setAdapter(arrayAdapterMedicamento);
                                                 System.out.println(classeFarm);
@@ -136,13 +135,13 @@ public class MainActivity extends AppCompatActivity {
         classeFarmacologica = new ClasseFarmacologica();
         classeFarmacologicaBD = new ClasseFarmacologicaBD(MainActivity.this);
         int contador = 0;
+
         //enquanto tiver classe na lista ele cadastra no banco
-        Iterator itr = classeFarmacologica.getListaClasseFarmacologica().iterator();
-        while (itr.hasNext()) {
-            ClasseFarmacologica classe = (ClasseFarmacologica) itr.next();
+        for (ClasseFarmacologica classe : classeFarmacologica.getListaClasseFarmacologica()) {
             classeFarmacologicaBD.cadastrar(classe);
             contador++;
         }
+
         System.out.println("Foram inseridas " + contador + " classes farmacológicas no banco");
     }
 
@@ -151,13 +150,13 @@ public class MainActivity extends AppCompatActivity {
         medicamento = new Medicamento();
         medicamentoBD = new MedicamentoBD(MainActivity.this);
         int contador = 0;
+
         //enquanto tiver medicamento na lista ele cadastra no banco
-        Iterator itr = medicamento.getListaMedicamentos().iterator();
-        while (itr.hasNext()) {
-            Medicamento medicamento = (Medicamento) itr.next();
-            medicamentoBD.cadastrar(medicamento);
+        for (Medicamento med : medicamento.getListaMedicamentos()) {
+            medicamentoBD.cadastrar(med);
             contador++;
         }
+
         System.out.println("Foram inseridos " + contador + " medicamentos no banco");
 
 
@@ -177,12 +176,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public ArrayList<Medicamento> getMedicamentoPorClasseFarmacologica(ClasseFarmacologica classeFarmacologica) {
-
         medicamentoBD = new MedicamentoBD(MainActivity.this);
-
-        ArrayList<Medicamento> listarMedicamentosPorClasseFarmacologica = medicamentoBD.listarMedicamentosPorClasseFarmacologica(classeFarmacologica);
-
-        return listarMedicamentosPorClasseFarmacologica;
+        return medicamentoBD.listarMedicamentosPorClasseFarmacologica(classeFarmacologica);
     }
 
     public void getAutoCompleteListView(EditText autoComplete) {

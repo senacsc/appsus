@@ -1,4 +1,4 @@
-package sc.senac.mms.appsus.Dao;
+package sc.senac.mms.appsus.dao;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 
-import sc.senac.mms.appsus.Model.ClasseFarmacologica;
+import sc.senac.mms.appsus.model.ClasseFarmacologica;
 
 /**
  * Created by Milton on 18/05/2016.
