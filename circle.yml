@@ -1,14 +1,27 @@
+machine:
+  environment:
+    ANDROID_HOME: /home/ubuntu/android
+
+dependencies:
+  cache_directories:
+    - ~/.android
+    - ~/android
+  override:
+    - sh ./install-dependencies.sh
+    - cp ./GleanAndroid/ci.properties ./GleanAndroid/local.properties
+    - cd ./GleanAndroid/ && bash ./gradlew dependencies -x lint
+
 test:
   override:
-    # start the emulator
-    - emulator -avd circleci-android22 -no-audio -no-window:
+    # create emulator
+    - emulator -avd circleci-android22:
         background: true
         parallel: true
-    # wait for it to have booted
+    # wait for it to boot
     - circle-android wait-for-boot
-    # run tests  against the emulator.
-    - ./gradlew connectedAndroidTest
+    #  tests
+    - cd ./GleanAndroid/ && bash ./gradlew connectedAndroidTestStagingDebug -PtestSize=small -PdisablePreDex --continue -x lint
     # copy the build outputs to artifacts
-    - cp -r my-project/build/outputs $CIRCLE_ARTIFACTS
+    - cp -r GleanAndroid/Impraise-Android/build/outputs $CIRCLE_ARTIFACTS
     # copy the test results to the test results directory.
-    - cp -r my-project/build/outputs/androidTest-results/* $CIRCLE_TEST_REPORTS
+    - cp -r GleanAndroid/Impraise-Android/build/outputs/androidTest-results/* $CIRCLE_TEST_REPORTS
