@@ -31,9 +31,10 @@ cache:
     - $HOME/.gradle/wrapper/
 
 env: 
-  - "GRADLE_OPTS=\"-XX:MaxPermSize=1024m -XX:+CMSClassUnloadingEnabled -XX:+HeapDumpOnOutOfMemoryError -Xmx2048m\""
-  - MALLOC_ARENA_MAX=2
-  - ADB_INSTALL_TIMEOUT=10
+  global:
+    - "GRADLE_OPTS=\"-XX:MaxPermSize=1024m -XX:+CMSClassUnloadingEnabled -XX:+HeapDumpOnOutOfMemoryError -Xmx2048m\""
+    - MALLOC_ARENA_MAX=2
+    - ADB_INSTALL_TIMEOUT=10
   
 language: android
 
