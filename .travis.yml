@@ -21,9 +21,9 @@ script:
   - ./gradlew assembleAndroidTest -PdisablePreDex
   - android-wait-for-emulator
   - adb devices
-  - adb shell input keyevent 82 &amp;
-  - adb install -r app/build/outputs/apk/app-mock-debug.apk
-  - adb install -r app/build/outputs/apk/app-mock-debug-androidTest-unaligned.apk
+  - adb shell input keyevent 82 &
+  - adb install -r app/build/outputs/apk/app-debug.apk
+  - adb install -r app/build/outputs/apk/app-debug-androidTest-unaligned.apk
   - ./gradlew check -PdisablePreDex --continue --stacktrace
   - .buildscript/launchInstrumentationTests.sh
 
