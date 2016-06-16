@@ -1,4 +1,4 @@
-package sc.senac.mms.appsus.dao;
+package sc.senac.mms.appsus.entity.dao;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -6,12 +6,9 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 
-import sc.senac.mms.appsus.model.ClasseFarmacologica;
+import sc.senac.mms.appsus.entity.ClasseTerapeutica;
 
-/**
- * Created by Milton on 18/05/2016.
- */
-public class ClasseFarmacologicaBD {
+public class ClasseTerapeuticaDAO {
 
     //Definir nome do banco
     private static final String NOME_BANCO = "sus.bd";
@@ -34,24 +31,24 @@ public class ClasseFarmacologicaBD {
             "SELECT idclassefarmacologica, nome FROM " + NOME_TABELA;
 
     //Código SQL para criação da tabela
-    private ClasseFarmacologica classeFarmacologica;
+    private ClasseTerapeutica classeFarmacologica;
     private SQLiteDatabase banco;
 
-    public ClasseFarmacologicaBD(Context ctx) {
+    public ClasseTerapeuticaDAO(Context ctx) {
         this.banco = ctx.openOrCreateDatabase(NOME_BANCO, BANCO_ACESSO, null);
         this.banco.execSQL(SQL_TABLE);
     }
 
-    public ClasseFarmacologica getClasseFarmacologica() {
+    public ClasseTerapeutica getClasseFarmacologica() {
         return classeFarmacologica;
     }
 
-    public void setClasseFarmacologica(ClasseFarmacologica classeFarmacologica) {
+    public void setClasseFarmacologica(ClasseTerapeutica classeFarmacologica) {
         this.classeFarmacologica = classeFarmacologica;
     }
 
     //Método para realizar cadastro no banco
-    public boolean cadastrar(ClasseFarmacologica classeFarmacologica) {
+    public boolean cadastrar(ClasseTerapeutica classeFarmacologica) {
 
         long res = this.banco.insert(NOME_TABELA, null, classeFarmacologica.getContentValues());
 
@@ -65,7 +62,7 @@ public class ClasseFarmacologicaBD {
     //Método para edição de um emprestimo
     public boolean editar() {
 
-        String[] args = new String[]{String.valueOf(this.classeFarmacologica.getId())};
+        String[] args = new String[]{String.valueOf(this.classeFarmacologica.getIdClasse())};
 
         int res = this.banco.update(NOME_TABELA, this.classeFarmacologica.getContentValues(), "idclassefarmacologica=?", args);
 
@@ -78,7 +75,7 @@ public class ClasseFarmacologicaBD {
     //Método para exclusao
     public boolean excluir() {
 
-        String[] args = new String[]{String.valueOf(this.classeFarmacologica.getId())};
+        String[] args = new String[]{String.valueOf(this.classeFarmacologica.getIdClasse())};
 
         int res = this.banco.delete(NOME_TABELA, "idclassefarmacologica=?", args);
 
@@ -90,20 +87,22 @@ public class ClasseFarmacologicaBD {
 
 
     // Método para listar emprestimo
-    public ArrayList<ClasseFarmacologica> listarClasseFarmacologica() {
+    public ArrayList<ClasseTerapeutica> listarClasseFarmacologica() {
 
-        ArrayList<ClasseFarmacologica> listClasseFarmacologica = new ArrayList<>();
+        ArrayList<ClasseTerapeutica> listClasseFarmacologica = new ArrayList<>();
         Cursor cursor = this.banco.rawQuery(SELECT_ALL, null);
 
         while (cursor.moveToNext()) {
 
-            ClasseFarmacologica classeFarmacologica = new ClasseFarmacologica();
+            ClasseTerapeutica classeFarmacologica = new ClasseTerapeutica();
 
-            classeFarmacologica.setId(cursor.getInt(cursor.getColumnIndex("idclassefarmacologica")));
+            classeFarmacologica.setIdClasse(cursor.getLong(cursor.getColumnIndex("idclassefarmacologica")));
             classeFarmacologica.setNome(cursor.getString(cursor.getColumnIndex("nome")));
 
             listClasseFarmacologica.add(classeFarmacologica);
         }
+
+        cursor.close();
 
         return listClasseFarmacologica;
     }

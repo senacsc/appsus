@@ -1,4 +1,4 @@
-package sc.senac.mms.appsus.dao;
+package sc.senac.mms.appsus.entity.dao;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -6,8 +6,9 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 
-import sc.senac.mms.appsus.model.ClasseFarmacologica;
-import sc.senac.mms.appsus.model.Medicamento;
+import sc.senac.mms.appsus.Application;
+import sc.senac.mms.appsus.entity.ClasseTerapeutica;
+import sc.senac.mms.appsus.entity.Medicamento;
 
 public class MedicamentoBD {
 
@@ -74,12 +75,12 @@ public class MedicamentoBD {
     }
 
     public boolean editar() {
-        String[] args = new String[]{String.valueOf(this.medicamento.getId())};
+        String[] args = new String[]{String.valueOf(this.medicamento.getIdMedicamento())};
         return this.banco.update(NOME_TABELA, this.medicamento.getContentValues(), "idemprestimo=?", args) > 0;
     }
 
     public boolean excluir() {
-        String[] args = new String[]{String.valueOf(this.medicamento.getId())};
+        String[] args = new String[]{String.valueOf(this.medicamento.getIdMedicamento())};
         return this.banco.delete(NOME_TABELA, "idemprestimo=?", args) > 0;
     }
 
@@ -91,13 +92,13 @@ public class MedicamentoBD {
         while (cursor.moveToNext()) {
 
             Medicamento medicamento = new Medicamento();
-            ClasseFarmacologica classeFarmacologica = new ClasseFarmacologica();
-            classeFarmacologica.setId(cursor.getInt(cursor.getColumnIndex("idclassefarmacologica")));
+            ClasseTerapeutica classeFarmacologica = new ClasseTerapeutica();
+            classeFarmacologica.setIdClasse(cursor.getLong(cursor.getColumnIndex("idclassefarmacologica")));
             classeFarmacologica.setNome(cursor.getString(cursor.getColumnIndex("classefarmacologica.nome")));
-            medicamento.setId(cursor.getInt(cursor.getColumnIndex("idmedicamento")));
+            medicamento.setIdMedicamento(cursor.getInt(cursor.getColumnIndex("idmedicamento")));
             medicamento.setDescricao(cursor.getString(cursor.getColumnIndex("descricao")));
             medicamento.setFormaApresentacao(cursor.getString(cursor.getColumnIndex("forma_apresentacao")));
-            medicamento.setClasseFarmacologica(classeFarmacologica);
+            medicamento.setClasseTerapeutica(classeFarmacologica);
 
             //adiciona medicamento na lista
             listMedicamento.add(medicamento);
@@ -108,7 +109,7 @@ public class MedicamentoBD {
         return listMedicamento;
     }
 
-    public ArrayList<Medicamento> listarMedicamentosPorClasseFarmacologica(ClasseFarmacologica classeFarmacologicaFiltro) {
+    public ArrayList<Medicamento> listarMedicamentosPorClasseFarmacologica(ClasseTerapeutica classeFarmacologicaFiltro) {
 
         ArrayList<Medicamento> listMedicamento = new ArrayList<>();
         String[] args = new String[]{classeFarmacologicaFiltro.getNome()};
@@ -117,14 +118,14 @@ public class MedicamentoBD {
         while (cursor.moveToNext()) {
 
             Medicamento medicamento = new Medicamento();
-            ClasseFarmacologica classeFarmacologica = new ClasseFarmacologica();
+            ClasseTerapeutica classeFarmacologica = new ClasseTerapeutica();
 
-            classeFarmacologica.setId(cursor.getInt(cursor.getColumnIndex("idclassefarmacologica")));
+            classeFarmacologica.setIdClasse(cursor.getLong(cursor.getColumnIndex("idclassefarmacologica")));
             classeFarmacologica.setNome(cursor.getString(cursor.getColumnIndex("classefarmacologica.nome")));
-            medicamento.setId(cursor.getInt(cursor.getColumnIndex("idmedicamento")));
+            medicamento.setIdMedicamento(cursor.getInt(cursor.getColumnIndex("idmedicamento")));
             medicamento.setDescricao(cursor.getString(cursor.getColumnIndex("descricao")));
             medicamento.setFormaApresentacao(cursor.getString(cursor.getColumnIndex("forma_apresentacao")));
-            medicamento.setClasseFarmacologica(classeFarmacologica);
+            medicamento.setClasseTerapeutica(classeFarmacologica);
 
             //adiciona medicamento na lista
             listMedicamento.add(medicamento);
