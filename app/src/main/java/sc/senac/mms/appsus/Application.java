@@ -2,11 +2,16 @@ package sc.senac.mms.appsus;
 
 import android.util.Log;
 
+import sc.senac.mms.appsus.entity.Historico;
+import sc.senac.mms.appsus.entity.Medicamento;
+import sc.senac.mms.appsus.manager.ClasseTerapeuticaManager;
 import sc.senac.mms.appsus.manager.HistoricoManager;
+import sc.senac.mms.appsus.manager.MedicamentoManager;
+import sc.senac.mms.appsus.manager.helpers.AndroidDB;
+import sc.senac.mms.appsus.manager.helpers.PortableDB;
 
 public class Application extends android.app.Application {
 
-    public static final String DATABASE_NAME = "appsus.db";
     private DataManager dataManager;
 
     private static Application mInstance;
@@ -19,6 +24,8 @@ public class Application extends android.app.Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+
+        initializeManagers();
     }
 
     public static Application getInstance() {
@@ -34,22 +41,22 @@ public class Application extends android.app.Application {
         Log.i(getClass().getSimpleName(), "Initializing database managers..");
 
         // Database Managers
-        this.dataManager = new DataManager(getApplicationContext(), DATABASE_NAME);
-        //this.dataManager.registerManager(MedicamentoManager.class);
-        //this.dataManager.registerManager(ClasseTerapeuticaManager.class);
-        this.dataManager.registerManager(HistoricoManager.class);
+        this.dataManager = new DataManager(getApplicationContext());
+        this.dataManager.register(HistoricoManager.class);
+        this.dataManager.register(MedicamentoManager.class);
+        this.dataManager.register(ClasseTerapeuticaManager.class);
     }
 
     public HistoricoManager getHistoricoManager() {
-        return (HistoricoManager) this.dataManager.getManager(HistoricoManager.class);
+        return (HistoricoManager) this.dataManager.get(HistoricoManager.class);
     }
 
-//    public MedicamentoManager getMedicamentoManager() {
-//        return (MedicamentoManager) this.dataManager.getManager(MedicamentoManager.class);
-//    }
-//
-//    public ClasseTerapeuticaManager getClasseTerapeuticaManager() {
-//        return (ClasseTerapeuticaManager) this.dataManager.getManager(ClasseTerapeuticaManager.class);
-//    }
+    public MedicamentoManager getMedicamentoManager() {
+        return (MedicamentoManager) this.dataManager.get(MedicamentoManager.class);
+    }
+
+    public ClasseTerapeuticaManager getClasseTerapeuticaManager() {
+        return (ClasseTerapeuticaManager) this.dataManager.get(ClasseTerapeuticaManager.class);
+    }
 
 }

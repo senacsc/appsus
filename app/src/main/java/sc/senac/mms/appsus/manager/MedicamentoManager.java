@@ -8,19 +8,19 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 
-import sc.senac.mms.appsus.entity.Historico;
+import sc.senac.mms.appsus.entity.Medicamento;
 import sc.senac.mms.appsus.interfaces.DataManagerHelper;
 import sc.senac.mms.appsus.interfaces.DataManagerInterface;
 import sc.senac.mms.appsus.manager.annotations.DatabaseSource;
-import sc.senac.mms.appsus.manager.helpers.AndroidDB;
+import sc.senac.mms.appsus.manager.helpers.PortableDB;
 
-@DatabaseSource(ref = AndroidDB.class)
-public class HistoricoManager implements DataManagerInterface<Historico, Long> {
+@DatabaseSource(ref = PortableDB.class)
+public class MedicamentoManager implements DataManagerInterface<Medicamento, Long> {
 
     private DataManagerHelper helper;
-    private Dao<Historico, Long> dao;
+    private Dao<Medicamento, Long> dao;
 
-    public HistoricoManager(DataManagerHelper helper) {
+    public MedicamentoManager(DataManagerHelper helper) {
         this.helper = helper;
         try {
             this.dao = getDAO();
@@ -30,21 +30,21 @@ public class HistoricoManager implements DataManagerInterface<Historico, Long> {
     }
 
     @Override
-    public Dao<Historico, Long> getDAO() throws SQLException {
+    public Dao<Medicamento, Long> getDAO() throws SQLException {
         if (dao == null) {
-            dao = this.helper.getDao(Historico.class);
+            dao = this.helper.getDao(Medicamento.class);
         }
         return dao;
     }
 
     @Override
     public Boolean OnCreate(ConnectionSource connectionSource) throws SQLException {
-        return TableUtils.createTableIfNotExists(connectionSource, Historico.class) > 0;
+        return TableUtils.createTableIfNotExists(connectionSource, Medicamento.class) > 0;
     }
 
     @Override
     public Boolean OnUpgrade(ConnectionSource connectionSource, Integer oldVersion, Integer newVersion) throws SQLException {
-        Log.i(getClass().getSimpleName(), "upgrading table 'historico'");
+        Log.i(getClass().getSimpleName(), "upgrading table 'medicamento'");
         this.OnDestroy(connectionSource);
         this.OnCreate(connectionSource);
         return true;
@@ -52,6 +52,6 @@ public class HistoricoManager implements DataManagerInterface<Historico, Long> {
 
     @Override
     public Boolean OnDestroy(ConnectionSource connectionSource) throws SQLException {
-        return TableUtils.dropTable(connectionSource, Historico.class, true) > 0;
+        return TableUtils.dropTable(connectionSource, Medicamento.class, true) > 0;
     }
 }

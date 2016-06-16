@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import sc.senac.mms.appsus.entity.Medicamento;
+import sc.senac.mms.appsus.manager.helpers.PortableDB;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
@@ -29,13 +30,12 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
 
         PortableDB portableDB = new PortableDB(getContext(), "medicamentos.db");
 
+        Dao<Medicamento, Long> dao = portableDB.getDao(Medicamento.class);
+        List<Medicamento> med = dao.queryForAll();
 
-            Dao<Medicamento, Long> dao = portableDB.getDao(Medicamento.class);
-            List<Medicamento> med = dao.queryForAll();
+        System.out.println(Arrays.toString(med.toArray()));
 
-            System.out.println(Arrays.toString(med.toArray()));
-
-            assertNotNull(med);
+        assertNotNull(med);
 
     }
 

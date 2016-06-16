@@ -15,7 +15,7 @@ public class Historico {
     @DatabaseField
     private Date dtVisualizacao;
 
-    @DatabaseField(foreign = true, foreignColumnName = "id_medicamento")
+    @DatabaseField(foreign = true)
     private Medicamento medicamento;
 
     public Historico() {

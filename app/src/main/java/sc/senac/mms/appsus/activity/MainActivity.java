@@ -118,20 +118,18 @@ public class MainActivity extends Activity {
 
         MedicamentoBD daoMedicamento = new MedicamentoBD(getApplicationContext());
 
-        ArrayList<Medicamento> medicamentos = daoMedicamento.listarMedicamentos();
+        ArrayList<Medicamento> medicamentos = new ArrayList<>();//daoMedicamento.listarMedicamentos();
         Integer itemLayout = android.R.layout.simple_list_item_1;
 
         ArrayAdapter<Medicamento> adapter = new ArrayAdapter<>(this, itemLayout, medicamentos);
-
         listViewMedicamentos.setAdapter(adapter);
 
-        return daoMedicamento.listarMedicamentos();
-
+        return medicamentos; //daoMedicamento.listarMedicamentos();
     }
 
     public List<Medicamento> getMedicamentoPorClasseFarmacologica(ClasseTerapeutica classeTerapeutica) {
-        MedicamentoBD medicamentoBD = new MedicamentoBD(MainActivity.this);
-        return medicamentoBD.listarMedicamentosPorClasseFarmacologica(classeTerapeutica);
+        //MedicamentoBD medicamentoBD = new MedicamentoBD(MainActivity.this);
+        return new ArrayList<>();//medicamentoBD.listarMedicamentosPorClasseFarmacologica(classeTerapeutica);
     }
 
     public void getAutoCompleteListView(EditText autoComplete) {
