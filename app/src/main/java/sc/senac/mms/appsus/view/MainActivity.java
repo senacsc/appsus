@@ -5,17 +5,27 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -37,8 +47,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+
+        // Handle Toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         // Salva uma refêrencia da aplicação para auxiliar no acesso
         // dos gerenciadores dos bancos de dados
@@ -53,7 +66,48 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         recyclerViewMedicamentos = (RecyclerView) findViewById(R.id.recyclerViewMedicamentos);
         recyclerViewMedicamentos.setLayoutManager(new LinearLayoutManager(this));
 
+        // Iniciar o menu lateral
+        result = new DrawerBuilder()
+            .withActivity(this)
+            .withToolbar(toolbar)
+            .withSavedInstance(savedInstanceState)
+            .withRootView(R.id.drawer_layout)
+            .withDisplayBelowStatusBar(false)
+            .withTranslucentStatusBar(false)
+            .withActionBarDrawerToggleAnimated(true)
+            .addDrawerItems(
+                new PrimaryDrawerItem().withName("Medicamentos"),
+                new SecondaryDrawerItem().withName("Histórico")
+            )
+            .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                @Override
+                public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                    if (drawerItem instanceof Nameable) {
+                        Toast.makeText(MainActivity.this, ((Nameable) drawerItem).getName().getText(MainActivity.this), Toast.LENGTH_SHORT).show();
+                    }
+
+                    return false;
+                }
+            }).build();
+
         loadMedicamentoList();
+    }
+
+    private Drawer result = null;
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState = result.saveInstanceState(outState);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (result != null && result.isDrawerOpen()) {
+            result.closeDrawer();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     /**
@@ -90,10 +144,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         final MenuItem item = menu.findItem(R.id.search_action);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
-
         final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false);
         searchView.setQueryRefinementEnabled(true);
         searchView.setQueryHint("Pesquisar...");
         searchView.setOnQueryTextListener(this);
@@ -109,14 +163,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     protected void onNewIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 
-            String query = intent.getStringExtra(SearchManager.QUERY);
+            final String query = intent.getStringExtra(SearchManager.QUERY);
 
             final MenuItem item = this.mainMenu.findItem(R.id.search_action);
             final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
 
             searchView.setQuery(query, false);
-
-            Toast.makeText(MainActivity.this, query, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -183,7 +235,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      */
     @Override
     public boolean onMenuItemActionExpand(MenuItem item) {
-        // Return true to expand action view
+        result.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         return true;
     }
 
@@ -196,7 +249,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
         medicamentoAdapter.updateList(medicamentoListModel);
-        // Return true to collapse action view
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        result.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
         return true;
     }
 }

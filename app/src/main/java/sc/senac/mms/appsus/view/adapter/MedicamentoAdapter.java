@@ -32,6 +32,10 @@ public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoViewHold
         return new MedicamentoViewHolder(v);
     }
 
+    public Medicamento getItem(int position) {
+        return mMedicamentoModel.get(position);
+    }
+
     @Override
     public int getItemCount() {
         return mMedicamentoModel.size();

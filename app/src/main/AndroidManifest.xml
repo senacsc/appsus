@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".view.MainActivity" android:launchMode="singleTop">
+        <activity android:theme="@style/MaterialDrawerTheme.Light.DarkToolbar.TranslucentStatus" android:name=".view.MainActivity" android:launchMode="singleTop">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

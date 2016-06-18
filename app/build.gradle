@@ -38,4 +38,8 @@ dependencies {
 
     // External Libraries
     compile group: 'com.j256.ormlite', name: 'ormlite-android', version: '4.45'
+
+    compile('com.mikepenz:materialdrawer:5.3.1@aar') {
+        transitive = true
+    }
 }
