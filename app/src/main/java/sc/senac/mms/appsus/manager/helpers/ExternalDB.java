@@ -6,22 +6,22 @@ import android.database.sqlite.SQLiteDatabase;
 import com.j256.ormlite.support.ConnectionSource;
 
 import sc.senac.mms.appsus.PortableSQLiteHelper;
-import sc.senac.mms.appsus.interfaces.DataManagerHelper;
+import sc.senac.mms.appsus.manager.interfaces.DataManagerHelper;
 
-public class PortableDB extends PortableSQLiteHelper implements DataManagerHelper {
+public class ExternalDB extends PortableSQLiteHelper implements DataManagerHelper {
 
     public static final int DATABASE_VERSION = 1;
     public static final String DEFAULT_DATABASE = "medicamentos.db";
 
-    public PortableDB(Context context) {
+    public ExternalDB(Context context) {
         super(context, DEFAULT_DATABASE, null, DATABASE_VERSION);
     }
 
-    public PortableDB(Context context, String database) {
+    public ExternalDB(Context context, String database) {
         super(context, database, null, DATABASE_VERSION);
     }
 
-    public PortableDB(Context context, String database, int databaseVersion) {
+    public ExternalDB(Context context, String database, int databaseVersion) {
         super(context, database, null, databaseVersion);
     }
 

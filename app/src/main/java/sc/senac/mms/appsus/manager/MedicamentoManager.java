@@ -7,14 +7,15 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import sc.senac.mms.appsus.entity.Medicamento;
-import sc.senac.mms.appsus.interfaces.DataManagerHelper;
-import sc.senac.mms.appsus.interfaces.DataManagerInterface;
 import sc.senac.mms.appsus.manager.annotations.DatabaseSource;
-import sc.senac.mms.appsus.manager.helpers.PortableDB;
+import sc.senac.mms.appsus.manager.helpers.ExternalDB;
+import sc.senac.mms.appsus.manager.interfaces.DataManagerHelper;
+import sc.senac.mms.appsus.manager.interfaces.DataManagerInterface;
 
-@DatabaseSource(ref = PortableDB.class)
+@DatabaseSource(ref = ExternalDB.class)
 public class MedicamentoManager implements DataManagerInterface<Medicamento, Long> {
 
     private DataManagerHelper helper;
@@ -53,5 +54,18 @@ public class MedicamentoManager implements DataManagerInterface<Medicamento, Lon
     @Override
     public Boolean OnDestroy(ConnectionSource connectionSource) throws SQLException {
         return TableUtils.dropTable(connectionSource, Medicamento.class, true) > 0;
+    }
+
+    /**
+     * Busca todos os medicamentos ordenados pela descrição
+     *
+     * @return lista de medicamentos
+     * @throws SQLException
+     */
+    public List<Medicamento> buscarMedicamentos() throws SQLException {
+        return this.getDAO()
+            .queryBuilder()
+            .orderBy("nomeMedicamento", true)
+            .query();
     }
 }

@@ -9,12 +9,12 @@ import com.j256.ormlite.table.TableUtils;
 import java.sql.SQLException;
 
 import sc.senac.mms.appsus.entity.ClasseTerapeutica;
-import sc.senac.mms.appsus.interfaces.DataManagerHelper;
-import sc.senac.mms.appsus.interfaces.DataManagerInterface;
+import sc.senac.mms.appsus.manager.interfaces.DataManagerHelper;
+import sc.senac.mms.appsus.manager.interfaces.DataManagerInterface;
 import sc.senac.mms.appsus.manager.annotations.DatabaseSource;
-import sc.senac.mms.appsus.manager.helpers.PortableDB;
+import sc.senac.mms.appsus.manager.helpers.ExternalDB;
 
-@DatabaseSource(ref = PortableDB.class)
+@DatabaseSource(ref = ExternalDB.class)
 public class ClasseTerapeuticaManager implements DataManagerInterface<ClasseTerapeutica, Long> {
 
     private DataManagerHelper helper;

@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import sc.senac.mms.appsus.entity.Medicamento;
-import sc.senac.mms.appsus.manager.helpers.PortableDB;
+import sc.senac.mms.appsus.manager.helpers.ExternalDB;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
@@ -28,9 +28,9 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
 
         this.createApplication();
 
-        PortableDB portableDB = new PortableDB(getContext(), "medicamentos.db");
+        ExternalDB externalDB = new ExternalDB(getContext(), "medicamentos.db");
 
-        Dao<Medicamento, Long> dao = portableDB.getDao(Medicamento.class);
+        Dao<Medicamento, Long> dao = externalDB.getDao(Medicamento.class);
         List<Medicamento> med = dao.queryForAll();
 
         System.out.println(Arrays.toString(med.toArray()));
@@ -42,8 +42,8 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     public void testOpenPortableDatabase() {
         this.createApplication();
 
-        PortableDB portableDB = new PortableDB(getContext(), "medicamentos.db");
-        SQLiteDatabase db = portableDB.getReadableDatabase();
+        ExternalDB externalDB = new ExternalDB(getContext(), "medicamentos.db");
+        SQLiteDatabase db = externalDB.getReadableDatabase();
 
         Cursor queryCursor = null;
 

@@ -12,12 +12,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-import sc.senac.mms.appsus.interfaces.DataManagerHelper;
-import sc.senac.mms.appsus.interfaces.DataManagerInterface;
-import sc.senac.mms.appsus.manager.HistoricoManager;
+import sc.senac.mms.appsus.manager.interfaces.DataManagerHelper;
+import sc.senac.mms.appsus.manager.interfaces.DataManagerInterface;
 import sc.senac.mms.appsus.manager.annotations.DatabaseSource;
 import sc.senac.mms.appsus.manager.helpers.AndroidDB;
-import sc.senac.mms.appsus.manager.helpers.PortableDB;
+import sc.senac.mms.appsus.manager.helpers.ExternalDB;
 
 public class DataManager {
 
@@ -35,7 +34,7 @@ public class DataManager {
     }
 
     public void setupGlobalHelpers() {
-        this.db.put(PortableDB.class.getName(), new PortableDB(this.context));
+        this.db.put(ExternalDB.class.getName(), new ExternalDB(this.context));
         this.db.put(AndroidDB.class.getName(), new AndroidDB(this.context));
     }
 

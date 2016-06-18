@@ -2,13 +2,9 @@ package sc.senac.mms.appsus;
 
 import android.util.Log;
 
-import sc.senac.mms.appsus.entity.Historico;
-import sc.senac.mms.appsus.entity.Medicamento;
 import sc.senac.mms.appsus.manager.ClasseTerapeuticaManager;
 import sc.senac.mms.appsus.manager.HistoricoManager;
 import sc.senac.mms.appsus.manager.MedicamentoManager;
-import sc.senac.mms.appsus.manager.helpers.AndroidDB;
-import sc.senac.mms.appsus.manager.helpers.PortableDB;
 
 public class Application extends android.app.Application {
 

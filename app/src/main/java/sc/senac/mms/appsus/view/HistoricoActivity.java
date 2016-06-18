@@ -1,17 +1,16 @@
-package sc.senac.mms.appsus.activity;
+package sc.senac.mms.appsus.view;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import sc.senac.mms.appsus.Application;
 import sc.senac.mms.appsus.R;
 import sc.senac.mms.appsus.entity.Historico;
 
-public class HistoricoActivity extends Activity {
+public class HistoricoActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +20,6 @@ public class HistoricoActivity extends Activity {
         try {
 
             List<Historico> historicos = Application.getInstance().getHistoricoManager().getDAO().queryForAll();
-
 
         } catch (SQLException e) {
             e.printStackTrace();

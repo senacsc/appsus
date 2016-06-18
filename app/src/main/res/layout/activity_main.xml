@@ -3,18 +3,15 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:paddingLeft="@dimen/activity_horizontal_margin"
-              android:paddingRight="@dimen/activity_horizontal_margin"
-              tools:context=".activity.MainActivity">
+              android:orientation="vertical"
+              tools:context=".view.MainActivity">
 
-    <EditText
-        android:id="@+id/editTextPalavraDigitada"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <android.support.v7.widget.RecyclerView
+        android:background="@color/whiteColor"
+        android:id="@+id/recyclerViewMedicamentos"
+        android:layout_width="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_height="match_parent" />
 
-    <ListView
-        android:id="@+id/listViewMedicamentos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
 </LinearLayout>

@@ -1,4 +1,4 @@
-package sc.senac.mms.appsus.adapter;
+package sc.senac.mms.appsus.view.adapter;
 
 import android.content.Context;
 import android.widget.ArrayAdapter;

@@ -9,8 +9,8 @@ import com.j256.ormlite.table.TableUtils;
 import java.sql.SQLException;
 
 import sc.senac.mms.appsus.entity.Historico;
-import sc.senac.mms.appsus.interfaces.DataManagerHelper;
-import sc.senac.mms.appsus.interfaces.DataManagerInterface;
+import sc.senac.mms.appsus.manager.interfaces.DataManagerHelper;
+import sc.senac.mms.appsus.manager.interfaces.DataManagerInterface;
 import sc.senac.mms.appsus.manager.annotations.DatabaseSource;
 import sc.senac.mms.appsus.manager.helpers.AndroidDB;
 

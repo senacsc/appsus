@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">AppSUS</string>
     <string name="menu_filtro">Filtro</string>
+    <string name="action_search">Pesquisar</string>
 </resources>
