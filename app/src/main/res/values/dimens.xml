@@ -4,6 +4,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <!-- Typografy Sizes -->
-    <dimen name="h1_typo">20sp</dimen>
+    <dimen name="h1_typo">18sp</dimen>
     <dimen name="h2_typo">16sp</dimen>
 </resources>

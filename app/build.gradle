@@ -39,6 +39,8 @@ dependencies {
     // External Libraries
     compile group: 'com.j256.ormlite', name: 'ormlite-android', version: '4.45'
 
+    compile 'com.github.viethoa:fastscroller:1.1.0'
+    compile 'com.afollestad.material-dialogs:core:0.8.5.9'
     compile('com.mikepenz:materialdrawer:5.3.1@aar') {
         transitive = true
     }

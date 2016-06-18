@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.viethoa.RecyclerViewFastScroller;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +14,7 @@ import sc.senac.mms.appsus.R;
 import sc.senac.mms.appsus.entity.Medicamento;
 import sc.senac.mms.appsus.view.adapter.holder.MedicamentoViewHolder;
 
-public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoViewHolder> {
+public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoViewHolder> implements RecyclerViewFastScroller.BubbleTextGetter{
 
     private List<Medicamento> mMedicamentoModel;
 
@@ -36,6 +38,10 @@ public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoViewHold
         return mMedicamentoModel.get(position);
     }
 
+    public List<Medicamento> getItemList(){
+        return this.mMedicamentoModel;
+    }
+
     @Override
     public int getItemCount() {
         return mMedicamentoModel.size();
@@ -44,5 +50,18 @@ public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoViewHold
     public void updateList(List<Medicamento> listModel) {
         this.mMedicamentoModel = new ArrayList<>(listModel);
         notifyDataSetChanged();
+    }
+
+    @Override
+    public String getTextToShowInBubble(int pos) {
+
+        if (pos < 0 || pos >= mMedicamentoModel.size())
+            return null;
+
+        String name = mMedicamentoModel.get(pos).getDescricao();
+        if (name == null || name.length() < 1)
+            return null;
+
+        return mMedicamentoModel.get(pos).getDescricao().substring(0, 1);
     }
 }

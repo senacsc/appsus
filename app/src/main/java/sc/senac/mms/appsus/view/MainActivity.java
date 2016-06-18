@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.mikepenz.materialdrawer.Drawer;
@@ -26,6 +24,8 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
+import com.viethoa.RecyclerViewFastScroller;
+import com.viethoa.models.AlphabetItem;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -43,6 +43,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private List<Medicamento> medicamentoListModel;
     private MedicamentoAdapter medicamentoAdapter;
     private Menu mainMenu;
+    private RecyclerViewFastScroller fastScroller;
+
+    // Menu identifiers
+    public static Long MENU_ITEM_MEDICAMENTOS = 1L;
+    public static Long MENU_ITEM_HISTORICO = 2L;
+    public static Long MENU_ITEM_SOBRE = 3L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +82,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             .withTranslucentStatusBar(false)
             .withActionBarDrawerToggleAnimated(true)
             .addDrawerItems(
-                new PrimaryDrawerItem().withName("Medicamentos"),
-                new SecondaryDrawerItem().withName("Histórico")
+                new PrimaryDrawerItem().withName("Medicamentos").withIdentifier(MENU_ITEM_MEDICAMENTOS),
+                new PrimaryDrawerItem().withName("Histórico").withIdentifier(MENU_ITEM_HISTORICO),
+                new DividerDrawerItem(),
+                new SecondaryDrawerItem().withName("Sobre").withIdentifier(MENU_ITEM_SOBRE)
             )
             .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                 @Override
@@ -91,6 +99,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }).build();
 
         loadMedicamentoList();
+
+        fastScroller = (RecyclerViewFastScroller) findViewById(R.id.fast_scroller);
+        fastScroller.setRecyclerView(recyclerViewMedicamentos);
+
+        updateAlphabetList();
     }
 
     private Drawer result = null;
@@ -182,7 +195,31 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public boolean onQueryTextChange(String query) {
         final List<Medicamento> filteredList = this.filtrarMedicamentos(medicamentoListModel, query);
         medicamentoAdapter.updateList(filteredList);
+        updateAlphabetList();
         return true;
+    }
+
+    public void updateAlphabetList() {
+
+        ArrayList<AlphabetItem> mAlphabetItems = new ArrayList<>();
+        List<String> strAlphabets = new ArrayList<>();
+
+        for (int i = 0; i < medicamentoAdapter.getItemList().size(); i++) {
+
+            String name = medicamentoAdapter.getItem(i).getDescricao();
+
+            if (name == null || name.trim().isEmpty())
+                continue;
+
+            String word = name.substring(0, 1);
+
+            if (!strAlphabets.contains(word)) {
+                strAlphabets.add(word);
+                mAlphabetItems.add(new AlphabetItem(i, word, false));
+            }
+        }
+
+        fastScroller.setUpAlphabet(mAlphabetItems);
     }
 
     /**
