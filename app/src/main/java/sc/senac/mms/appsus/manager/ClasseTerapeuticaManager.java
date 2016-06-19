@@ -3,17 +3,16 @@ package sc.senac.mms.appsus.manager;
 import android.util.Log;
 
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 import java.util.List;
 
 import sc.senac.mms.appsus.entity.ClasseTerapeutica;
-import sc.senac.mms.appsus.manager.interfaces.DataManagerHelper;
-import sc.senac.mms.appsus.manager.interfaces.DataManagerInterface;
 import sc.senac.mms.appsus.manager.annotations.DatabaseSource;
 import sc.senac.mms.appsus.manager.helpers.ExternalDB;
+import sc.senac.mms.appsus.manager.interfaces.DataManagerHelper;
+import sc.senac.mms.appsus.manager.interfaces.DataManagerInterface;
 
 @DatabaseSource(ref = ExternalDB.class)
 public class ClasseTerapeuticaManager implements DataManagerInterface<ClasseTerapeutica, Long> {
@@ -39,21 +38,21 @@ public class ClasseTerapeuticaManager implements DataManagerInterface<ClasseTera
     }
 
     @Override
-    public Boolean OnCreate(ConnectionSource connectionSource) throws SQLException {
-        return TableUtils.createTableIfNotExists(connectionSource, ClasseTerapeutica.class) > 0;
+    public Boolean OnCreate() throws SQLException {
+        return TableUtils.createTableIfNotExists(this.helper.getConnectionSource(), ClasseTerapeutica.class) > 0;
     }
 
     @Override
-    public Boolean OnUpgrade(ConnectionSource connectionSource, Integer oldVersion, Integer newVersion) throws SQLException {
+    public Boolean OnUpgrade(Integer oldVersion, Integer newVersion) throws SQLException {
         Log.i(getClass().getSimpleName(), "upgrading table 'classeTerapeutica'");
-        this.OnDestroy(connectionSource);
-        this.OnCreate(connectionSource);
+        this.OnDestroy();
+        this.OnCreate();
         return true;
     }
 
     @Override
-    public Boolean OnDestroy(ConnectionSource connectionSource) throws SQLException {
-        return TableUtils.dropTable(connectionSource, ClasseTerapeutica.class, true) > 0;
+    public Boolean OnDestroy() throws SQLException {
+        return TableUtils.dropTable(this.helper.getConnectionSource(), ClasseTerapeutica.class, true) > 0;
     }
 
     public List<ClasseTerapeutica> buscarClasses() throws SQLException {

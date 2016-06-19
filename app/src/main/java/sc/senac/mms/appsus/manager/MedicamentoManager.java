@@ -39,21 +39,21 @@ public class MedicamentoManager implements DataManagerInterface<Medicamento, Lon
     }
 
     @Override
-    public Boolean OnCreate(ConnectionSource connectionSource) throws SQLException {
-        return TableUtils.createTableIfNotExists(connectionSource, Medicamento.class) > 0;
+    public Boolean OnCreate() throws SQLException {
+        return TableUtils.createTableIfNotExists(this.helper.getConnectionSource(), Medicamento.class) > 0;
     }
 
     @Override
-    public Boolean OnUpgrade(ConnectionSource connectionSource, Integer oldVersion, Integer newVersion) throws SQLException {
+    public Boolean OnUpgrade(Integer oldVersion, Integer newVersion) throws SQLException {
         Log.i(getClass().getSimpleName(), "upgrading table 'medicamento'");
-        this.OnDestroy(connectionSource);
-        this.OnCreate(connectionSource);
+        this.OnDestroy();
+        this.OnCreate();
         return true;
     }
 
     @Override
-    public Boolean OnDestroy(ConnectionSource connectionSource) throws SQLException {
-        return TableUtils.dropTable(connectionSource, Medicamento.class, true) > 0;
+    public Boolean OnDestroy() throws SQLException {
+        return TableUtils.dropTable(this.helper.getConnectionSource(), Medicamento.class, true) > 0;
     }
 
     /**

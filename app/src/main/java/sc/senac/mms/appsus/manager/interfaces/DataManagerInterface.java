@@ -12,8 +12,8 @@ public interface DataManagerInterface<T, R> {
 
     Dao<T, R> getDAO() throws java.sql.SQLException;
 
-    Boolean OnCreate(ConnectionSource connectionSource) throws java.sql.SQLException;
-    Boolean OnUpgrade(ConnectionSource connectionSource, Integer oldVersion, Integer newVersion) throws java.sql.SQLException;
-    Boolean OnDestroy(ConnectionSource connectionSource) throws java.sql.SQLException;
+    Boolean OnCreate() throws java.sql.SQLException;
+    Boolean OnUpgrade(Integer oldVersion, Integer newVersion) throws java.sql.SQLException;
+    Boolean OnDestroy() throws java.sql.SQLException;
 }
 

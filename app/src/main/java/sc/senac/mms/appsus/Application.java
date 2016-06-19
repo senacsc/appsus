@@ -2,6 +2,8 @@ package sc.senac.mms.appsus;
 
 import android.util.Log;
 
+import java.sql.SQLException;
+
 import sc.senac.mms.appsus.manager.ClasseTerapeuticaManager;
 import sc.senac.mms.appsus.manager.DataManager;
 import sc.senac.mms.appsus.manager.HistoricoManager;

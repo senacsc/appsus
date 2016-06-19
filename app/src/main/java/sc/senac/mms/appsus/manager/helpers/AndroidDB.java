@@ -6,6 +6,10 @@ import android.database.sqlite.SQLiteDatabase;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 
+import java.sql.SQLException;
+
+import sc.senac.mms.appsus.Application;
+import sc.senac.mms.appsus.manager.DataManager;
 import sc.senac.mms.appsus.manager.interfaces.DataManagerHelper;
 
 public class AndroidDB extends OrmLiteSqliteOpenHelper implements DataManagerHelper {
@@ -13,12 +17,16 @@ public class AndroidDB extends OrmLiteSqliteOpenHelper implements DataManagerHel
     public static final int DATABASE_VERSION = 1;
     public static final String DEFAULT_DATABASE = "appsus.db";
 
-    public AndroidDB(Context context) {
+    private DataManager dataManager;
+
+    public AndroidDB(Context context, DataManager dataManager) {
         super(context, DEFAULT_DATABASE, null, DATABASE_VERSION);
+        this.dataManager = dataManager;
     }
 
-    public AndroidDB(Context context, String database) {
+    public AndroidDB(Context context, String database, DataManager dataManager) {
         super(context, database, null, DATABASE_VERSION);
+        this.dataManager = dataManager;
     }
 
     public AndroidDB(Context context, String database, int databaseVersion) {
@@ -27,11 +35,19 @@ public class AndroidDB extends OrmLiteSqliteOpenHelper implements DataManagerHel
 
     @Override
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
-
+        try {
+            Application.getInstance().getHistoricoManager().OnCreate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
-
+        try {
+            Application.getInstance().getHistoricoManager().OnCreate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

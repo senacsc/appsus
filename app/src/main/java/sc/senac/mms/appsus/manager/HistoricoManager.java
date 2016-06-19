@@ -3,16 +3,18 @@ package sc.senac.mms.appsus.manager;
 import android.util.Log;
 
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
 
 import sc.senac.mms.appsus.entity.Historico;
-import sc.senac.mms.appsus.manager.interfaces.DataManagerHelper;
-import sc.senac.mms.appsus.manager.interfaces.DataManagerInterface;
+import sc.senac.mms.appsus.entity.Medicamento;
 import sc.senac.mms.appsus.manager.annotations.DatabaseSource;
 import sc.senac.mms.appsus.manager.helpers.AndroidDB;
+import sc.senac.mms.appsus.manager.interfaces.DataManagerHelper;
+import sc.senac.mms.appsus.manager.interfaces.DataManagerInterface;
 
 @DatabaseSource(ref = AndroidDB.class)
 public class HistoricoManager implements DataManagerInterface<Historico, Long> {
@@ -38,20 +40,36 @@ public class HistoricoManager implements DataManagerInterface<Historico, Long> {
     }
 
     @Override
-    public Boolean OnCreate(ConnectionSource connectionSource) throws SQLException {
-        return TableUtils.createTableIfNotExists(connectionSource, Historico.class) > 0;
+    public Boolean OnCreate() throws SQLException {
+        return TableUtils.createTableIfNotExists(this.helper.getConnectionSource(), Historico.class) > 0;
     }
 
     @Override
-    public Boolean OnUpgrade(ConnectionSource connectionSource, Integer oldVersion, Integer newVersion) throws SQLException {
+    public Boolean OnUpgrade(Integer oldVersion, Integer newVersion) throws SQLException {
         Log.i(getClass().getSimpleName(), "upgrading table 'historico'");
-        this.OnDestroy(connectionSource);
-        this.OnCreate(connectionSource);
+        this.OnDestroy();
+        this.OnCreate();
         return true;
     }
 
     @Override
-    public Boolean OnDestroy(ConnectionSource connectionSource) throws SQLException {
-        return TableUtils.dropTable(connectionSource, Historico.class, true) > 0;
+    public Boolean OnDestroy() throws SQLException {
+        return TableUtils.dropTable(this.helper.getConnectionSource(), Historico.class, true) > 0;
+    }
+
+    public List<Historico> buscarHistoricos() throws SQLException {
+        return this.getDAO().queryBuilder()
+            .orderBy("dtVisualizacao", false)
+            .query();
+
+    }
+
+    public boolean novo(Medicamento m) throws SQLException {
+
+        Historico h = new Historico();
+        h.setDtVisualizacao(new Date());
+        h.setMedicamento(m);
+
+        return this.getDAO().create(h) > 0;
     }
 }

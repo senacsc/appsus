@@ -34,13 +34,12 @@ public class DataManager {
     }
 
     public void setupGlobalHelpers() {
-        this.db.put(ExternalDB.class.getName(), new ExternalDB(this.context));
-        this.db.put(AndroidDB.class.getName(), new AndroidDB(this.context));
+        this.db.put(ExternalDB.class.getName(), new ExternalDB(this.context, this));
+        this.db.put(AndroidDB.class.getName(), new AndroidDB(this.context, this));
     }
 
     public void register(Class<? extends DataManagerInterface> dataManager) {
         try {
-
             if (!dataManager.isAnnotationPresent(DatabaseSource.class)) {
                 throw new InvalidClassException("Invalid data manager");
             }
@@ -67,20 +66,20 @@ public class DataManager {
         return this.managers.get(manager.getSimpleName());
     }
 
-    public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
+    public void onCreate() {
         for (Map.Entry<String, DataManagerInterface> dataManager : this.managers.entrySet()) {
             try {
-                dataManager.getValue().OnCreate(connectionSource);
+                dataManager.getValue().OnCreate();
             } catch (java.sql.SQLException e) {
                 Toast.makeText(context, "Failed to create " + dataManager.getKey() + " database.", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, int newVersion) {
+    public void onUpgrade(int oldVersion, int newVersion) {
         for (Map.Entry<String, DataManagerInterface> dataManager : this.managers.entrySet()) {
             try {
-                dataManager.getValue().OnUpgrade(connectionSource, oldVersion, newVersion);
+                dataManager.getValue().OnUpgrade(oldVersion, newVersion);
             } catch (java.sql.SQLException e) {
                 e.printStackTrace();
                 Toast.makeText(context, "Failed to upgrade " + dataManager.getKey() + " database.", Toast.LENGTH_SHORT).show();
@@ -88,10 +87,10 @@ public class DataManager {
         }
     }
 
-    public void onDestroy(ConnectionSource connectionSource) {
+    public void onDestroy() {
         for (Map.Entry<String, DataManagerInterface> dataManager : this.managers.entrySet()) {
             try {
-                dataManager.getValue().OnDestroy(connectionSource);
+                dataManager.getValue().OnDestroy();
             } catch (java.sql.SQLException e) {
                 Toast.makeText(context, "Failed to delete " + dataManager.getKey() + " database.", Toast.LENGTH_SHORT).show();
             }

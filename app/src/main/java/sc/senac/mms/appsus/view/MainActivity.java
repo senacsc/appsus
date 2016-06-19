@@ -12,13 +12,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -26,9 +26,7 @@ import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -56,9 +54,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private Menu mainMenu;
 
     // Menu identifiers
-    public static long MENU_ITEM_MEDICAMENTOS = 1L;
-    public static long MENU_ITEM_HISTORICO = 2L;
-    public static long MENU_ITEM_SOBRE = 3L;
+    public static final int MENU_ITEM_MEDICAMENTOS = 1;
+    public static final int MENU_ITEM_HISTORICO = 2;
+    public static final int MENU_ITEM_SOBRE = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,10 +95,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             .withTranslucentStatusBar(false)
             .withActionBarDrawerToggleAnimated(true)
             .addDrawerItems(
-                new PrimaryDrawerItem().withName("Medicamentos").withIdentifier(MENU_ITEM_MEDICAMENTOS).withIcon(R.drawable.ic_medicamento),
-                new PrimaryDrawerItem().withName("Histórico").withIdentifier(MENU_ITEM_HISTORICO).withIcon(R.drawable.ic_history_black_24dp),
+                new PrimaryDrawerItem()
+                    .withName("Medicamentos")
+                    .withIdentifier(MENU_ITEM_MEDICAMENTOS)
+                    .withIcon(R.drawable.ic_medicamento),
+                new PrimaryDrawerItem()
+                    .withName("Histórico")
+                    .withIdentifier(MENU_ITEM_HISTORICO)
+                    .withIcon(R.drawable.ic_history_black_24dp),
                 new DividerDrawerItem(),
-                new SecondaryDrawerItem().withName("Sobre").withIdentifier(MENU_ITEM_SOBRE)
+                new PrimaryDrawerItem()
+                    .withName("Sobre")
+                    .withIdentifier(MENU_ITEM_SOBRE)
+                    .withSelectable(false)
             )
             // Restaura o estado da barra lateral caso o usuário mude a orientação da tela
             .withSavedInstance(savedInstanceState)
@@ -139,18 +146,24 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         }
                     }).build();
 
+                @SuppressWarnings("ConstantConditions")
                 TextView classeTextView = (TextView) dialog.getCustomView().findViewById(R.id.classeTerapeuticaLabel);
                 classeTextView.setText(m.getClasseTerapeutica().getNome());
 
                 TextView formaTextView = (TextView) dialog.getCustomView().findViewById(R.id.formaApresentacaoLabel);
                 formaTextView.setText(m.getFormaApresentacao());
 
+                try {
+                    application.getHistoricoManager().novo(m);
+                } catch (SQLException e) {
+                    Log.e(MainActivity.class.getSimpleName(), "Erro ao adicionar um histórico para o medicamento " + m.getIdMedicamento(), e);
+                }
+
                 dialog.show();
             }
 
             @Override
             public boolean onItemLongClick(int position, View v) {
-                Log.d("LONG_CLICK", "onItemClick: Olá");
                 return true;
             }
         });
@@ -433,17 +446,36 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
     }
 
+    /**
+     * Mostrar modal com informações do aplicativo
+     */
+    public void mostrarInformacoesAplicativo() {
+        new MaterialDialog.Builder(this)
+            .title("Sobre")
+            .content(Html.fromHtml(
+                "Aplicativo desenvolvido como trabalho de conclusão de semestre do curso de Análise e " +
+                    "Desenvolvimento de Sistemas da faculdade SENAC de Florianópolis - SC.<br/><br/>" +
+                    "<b>Integrantes:</b> <br/><br/>" +
+                    "Matheus Vitória Garcez<br/>" +
+                    "Milton Andrade Junior")
+            )
+            .positiveText("FECHAR")
+            .show();
+    }
+
     @Override
     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
 
-        if (drawerItem.getIdentifier() == MENU_ITEM_HISTORICO) {
-            Toast.makeText(MainActivity.this, ((Nameable) drawerItem).getName().getText(MainActivity.this), Toast.LENGTH_SHORT).show();
-        } else if (drawerItem.getIdentifier() == MENU_ITEM_MEDICAMENTOS) {
-            Toast.makeText(MainActivity.this, ((Nameable) drawerItem).getName().getText(MainActivity.this), Toast.LENGTH_SHORT).show();
-        } else if (drawerItem.getIdentifier() == MENU_ITEM_SOBRE) {
-            Toast.makeText(MainActivity.this, ((Nameable) drawerItem).getName().getText(MainActivity.this), Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(MainActivity.this, ((Nameable) drawerItem).getName().getText(MainActivity.this), Toast.LENGTH_SHORT).show();
+        drawerItem.withSetSelected(false);
+
+        switch ((int) drawerItem.getIdentifier()) {
+            case MENU_ITEM_HISTORICO:
+                break;
+            case MENU_ITEM_MEDICAMENTOS:
+                break;
+            case MENU_ITEM_SOBRE:
+                mostrarInformacoesAplicativo();
+                break;
         }
 
         return false;
