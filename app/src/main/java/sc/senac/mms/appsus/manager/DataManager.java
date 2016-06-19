@@ -1,4 +1,4 @@
-package sc.senac.mms.appsus;
+package sc.senac.mms.appsus.manager;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

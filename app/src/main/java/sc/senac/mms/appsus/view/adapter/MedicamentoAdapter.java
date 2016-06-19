@@ -16,8 +16,18 @@ import sc.senac.mms.appsus.view.adapter.holder.MedicamentoViewHolder;
 
 public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoViewHolder> implements SectionIndexer {
 
+    private ClickListener clickListener;
     private List<Medicamento> mMedicamentoModel;
     private List<Object> mSections;
+
+    public void setOnItemClickListener(ClickListener clickListener) {
+        this.clickListener = clickListener;
+    }
+
+    public interface ClickListener {
+        void onItemClick(int position, View v);
+        boolean onItemLongClick(int position, View v);
+    }
 
     public MedicamentoAdapter(List<Medicamento> listModel) {
         this.mMedicamentoModel = listModel;
@@ -33,7 +43,7 @@ public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoViewHold
     @Override
     public MedicamentoViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.medicamento_item, viewGroup, false);
-        return new MedicamentoViewHolder(v);
+        return new MedicamentoViewHolder(v, this.clickListener);
     }
 
     public Medicamento getItem(int position) {

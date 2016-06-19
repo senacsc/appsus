@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.j256.ormlite.support.ConnectionSource;
 
-import sc.senac.mms.appsus.PortableSQLiteHelper;
+import sc.senac.mms.appsus.manager.helpers.internal.PortableSQLiteHelper;
 import sc.senac.mms.appsus.manager.interfaces.DataManagerHelper;
 
 public class ExternalDB extends PortableSQLiteHelper implements DataManagerHelper {

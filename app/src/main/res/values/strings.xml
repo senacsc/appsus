@@ -3,4 +3,11 @@
     <string name="menu_filtro">Filtro</string>
     <string name="action_search">Pesquisar</string>
     <string name="filtrar_por_classe">Filtrar por classe farmacológica</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="fechar">Fechar</string>
+    <string name="classe_terapeutica">Classe terapeutica</string>
+    <string name="forma_de_apresentacao">Forma de apresentação</string>
+    <string name="separator">-</string>
 </resources>

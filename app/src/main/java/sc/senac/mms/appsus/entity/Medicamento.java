@@ -1,13 +1,9 @@
 package sc.senac.mms.appsus.entity;
 
-import android.content.ContentValues;
-import android.widget.Filterable;
-
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Objects;
 
 @DatabaseTable(tableName = "medicamento")
@@ -98,45 +94,7 @@ public class Medicamento implements Serializable {
 
     @Override
     public String toString() {
-//        final StringBuilder sb = new StringBuilder("Medicamento{");
-//        sb.append("idMedicamento=").append(idMedicamento);
-//        sb.append(", descricao='").append(descricao).append('\'');
-//        sb.append(", formaApresentacao='").append(formaApresentacao).append('\'');
-//        sb.append(", classeTerapeutica=").append(classeTerapeutica);
-//        sb.append('}');
         return descricao;
     }
     // endregion
-
-    public ContentValues getContentValues() {
-        ContentValues values = new ContentValues();
-        values.put("descricao", this.getDescricao());
-        values.put("forma_apresentacao", this.getFormaApresentacao());
-        values.put("classefarmacologica_idclassefarmacologica", classeTerapeutica.getIdClasse());
-        return values;
-    }
-
-    public ArrayList<Medicamento> getListaMedicamentos() {
-
-        ClasseTerapeutica ctA = new ClasseTerapeutica(1, "ANALGESICOS");
-        ClasseTerapeutica ctB = new ClasseTerapeutica(2, "ANESTESICOS E COADJUVANTES");
-
-        Medicamento m1 = new Medicamento();
-        m1.setIdMedicamento(1L);
-        m1.setDescricao("FRASCO");
-        m1.setFormaApresentacao("PARACETAMOL, GOTAS - 200MG/ML (FR. 10 A 15ML)");
-        m1.setClasseTerapeutica(ctA);
-
-        Medicamento m2 = new Medicamento();
-        m2.setIdMedicamento(2L);
-        m2.setDescricao("FRASCO AMPOLA");
-        m2.setFormaApresentacao("BUPIVACAINA,CLORIDRATO VC(EMB.EST)0,25%,2,5MG/MLSOLU.I,F/A20");
-        m2.setClasseTerapeutica(ctB);
-
-        ArrayList<Medicamento> listMedicamentos = new ArrayList<>();
-        listMedicamentos.add(m1);
-        listMedicamentos.add(m2);
-
-        return listMedicamentos;
-    }
 }

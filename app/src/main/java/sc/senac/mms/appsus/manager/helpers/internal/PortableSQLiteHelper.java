@@ -1,4 +1,4 @@
-package sc.senac.mms.appsus;
+package sc.senac.mms.appsus.manager.helpers.internal;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -252,7 +252,7 @@ public abstract class PortableSQLiteHelper extends SQLiteAssetHelper {
             D castDao = (D) new RuntimeExceptionDao(dao);
             return castDao;
         } catch (SQLException e) {
-            throw new RuntimeException("Could not create RuntimeExcepitionDao for class " + clazz, e);
+            throw new RuntimeException("Could not create RuntimeExceptionDao for class " + clazz, e);
         }
     }
 

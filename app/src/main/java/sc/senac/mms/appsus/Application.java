@@ -3,6 +3,7 @@ package sc.senac.mms.appsus;
 import android.util.Log;
 
 import sc.senac.mms.appsus.manager.ClasseTerapeuticaManager;
+import sc.senac.mms.appsus.manager.DataManager;
 import sc.senac.mms.appsus.manager.HistoricoManager;
 import sc.senac.mms.appsus.manager.MedicamentoManager;
 
@@ -11,10 +12,6 @@ public class Application extends android.app.Application {
     private DataManager dataManager;
 
     private static Application mInstance;
-
-    public Application() {
-        super();
-    }
 
     @Override
     public void onCreate() {
