@@ -24,9 +24,8 @@ public class ExternalDB extends PortableSQLiteHelper implements DataManagerHelpe
         this.dataManager = dataManager;
     }
 
-    public ExternalDB(Context context, String database, DataManager dataManager) {
+    public ExternalDB(Context context, String database) {
         super(context, database, null, DATABASE_VERSION);
-        this.dataManager = dataManager;
     }
 
     public ExternalDB(Context context, String database, int databaseVersion) {

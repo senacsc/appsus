@@ -5,11 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -18,7 +19,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -36,18 +36,17 @@ import sc.senac.mms.appsus.Application;
 import sc.senac.mms.appsus.R;
 import sc.senac.mms.appsus.entity.ClasseTerapeutica;
 import sc.senac.mms.appsus.entity.Medicamento;
-import sc.senac.mms.appsus.view.adapter.MedicamentoAdapter;
-import xyz.danoz.recyclerviewfastscroller.sectionindicator.title.SectionTitleIndicator;
-import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
+import sc.senac.mms.appsus.view.fragments.HistoricoFragment;
+import sc.senac.mms.appsus.view.fragments.MedicamentosFragment;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, MenuItemCompat.OnActionExpandListener, Drawer.OnDrawerItemClickListener {
 
     private Application application;
-    private List<Medicamento> medicamentoListModel;
-    private List<Medicamento> filteredMedicamentoList;
-    private List<ClasseTerapeutica> classesTerapeuticas;
-    private RecyclerView recyclerViewMedicamentos;
-    private MedicamentoAdapter medicamentoAdapter;
+
+    public List<Medicamento> medicamentoListModel;
+    public List<Medicamento> filteredMedicamentoList;
+    public List<ClasseTerapeutica> classesTerapeuticas;
+
     private Bundle savedInstance;
     private Drawer menuLateral;
     private ActionBar toolbar;
@@ -75,16 +74,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         // Salva uma refêrencia da aplicação para auxiliar no acesso
         // dos gerenciadores dos bancos de dados
         this.application = (Application) getApplication();
-
-        /**
-         * Inicia uma view de medicamentos otimizada que mostra somente os itens
-         * que cabem na tela do usuário ao invés da lista inteira de medicamentos.
-         *
-         * Mais Informações em: <https://developer.android.com/reference/android/support/v7/widget/RecyclerView.html>
-         */
-        recyclerViewMedicamentos = (RecyclerView) findViewById(R.id.recyclerViewMedicamentos);
-        recyclerViewMedicamentos.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewMedicamentos.scrollToPosition(0);
 
         // Inicializa o menu lateral
         menuLateral = new DrawerBuilder()
@@ -119,55 +108,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         // da lista de objetos salvos na memória
         loadMedicamentoList();
 
-        VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller) findViewById(R.id.fast_scroller);
-        SectionTitleIndicator sectionTitleIndicator = (SectionTitleIndicator) findViewById(R.id.fast_scroller_section_title_indicator);
+        // Alterar fragment para a lista de medicamentos
+        MedicamentosFragment fragment = new MedicamentosFragment();
+        alterarFragment(fragment);
+    }
 
-        // Connect the recycler to the scroller (to let the scroller scroll the list)
-        fastScroller.setRecyclerView(recyclerViewMedicamentos);
-        fastScroller.setSectionIndicator(sectionTitleIndicator);
-
-        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
-        recyclerViewMedicamentos.addOnScrollListener(fastScroller.getOnScrollListener());
-
-        medicamentoAdapter.setOnItemClickListener(new MedicamentoAdapter.ClickListener() {
-            @Override
-            public void onItemClick(int position, View v) {
-
-                Medicamento m = medicamentoAdapter.getItem(position);
-
-                MaterialDialog dialog = new MaterialDialog.Builder(MainActivity.this)
-                    .title(m.getDescricao())
-                    .customView(R.layout.medicamento_dialog, true)
-                    .positiveText("FECHAR")
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-
-                        }
-                    }).build();
-
-                @SuppressWarnings("ConstantConditions")
-                TextView classeTextView = (TextView) dialog.getCustomView().findViewById(R.id.classeTerapeuticaLabel);
-                classeTextView.setText(m.getClasseTerapeutica().getNome());
-
-                TextView formaTextView = (TextView) dialog.getCustomView().findViewById(R.id.formaApresentacaoLabel);
-                formaTextView.setText(m.getFormaApresentacao());
-
-                try {
-                    application.getHistoricoManager().novo(m);
-                } catch (SQLException e) {
-                    Log.e(MainActivity.class.getSimpleName(), "Erro ao adicionar um histórico para o medicamento " + m.getIdMedicamento(), e);
-                }
-
-                dialog.show();
-            }
-
-            @Override
-            public boolean onItemLongClick(int position, View v) {
-                return true;
-            }
-        });
-
+    public void alterarFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame_container, fragment);
+        fragmentTransaction.commit();
     }
 
     @Override
@@ -216,10 +166,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         // Faz uma cópia da lista de medicamentos e salva em uma variável
         // para utilização no filtro de pesquisa
         this.filteredMedicamentoList = medicamentoListModel;
-
-        // Registra o adapter da lista de medicamentos
-        this.medicamentoAdapter = new MedicamentoAdapter(medicamentoListModel);
-        this.recyclerViewMedicamentos.setAdapter(medicamentoAdapter);
     }
 
     @Override
@@ -291,9 +237,18 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public boolean onQueryTextChange(String query) {
 
         List<Medicamento> medicamentos = filtrarMedicamentosPorDescricao(filteredMedicamentoList, query);
-        atualizarListaMedicamentos(medicamentos);
+
+        Fragment fragment = this.getFragmentAtual();
+
+        if (fragment instanceof MedicamentosFragment) {
+            ((MedicamentosFragment)fragment).atualizarListaMedicamentos(medicamentos);
+        }
 
         return true;
+    }
+
+    public Fragment getFragmentAtual() {
+        return this.getSupportFragmentManager().findFragmentById(R.id.frame_container);
     }
 
     /**
@@ -342,10 +297,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         return medicamentosFiltrados;
     }
 
-    private void atualizarListaMedicamentos(List<Medicamento> medicamentos) {
-        this.medicamentoAdapter.updateList(medicamentos);
-    }
-
     // ignored
     @Override
     public boolean onQueryTextSubmit(String query) {
@@ -373,9 +324,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      */
     @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
-        atualizarListaMedicamentos(filteredMedicamentoList);
+
+        Fragment fragment = this.getFragmentAtual();
+
+        if (fragment instanceof MedicamentosFragment) {
+            ((MedicamentosFragment)fragment).atualizarListaMedicamentos(filteredMedicamentoList);
+        }
+
         toolbar.setDisplayHomeAsUpEnabled(false);
         menuLateral.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
+
         return true;
     }
 
@@ -429,7 +387,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
 
                     medicamentos = filtrarMedicamentosPorDescricao(medicamentos, searchView.getQuery().toString());
-                    atualizarListaMedicamentos(medicamentos);
+
+                    Fragment fragment = getFragmentAtual();
+
+                    if (fragment instanceof MedicamentosFragment) {
+                        ((MedicamentosFragment)fragment).atualizarListaMedicamentos(medicamentos);
+                    }
                 }
             })
             .show();
@@ -468,10 +431,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         drawerItem.withSetSelected(false);
 
+        Fragment fragment;
+
         switch ((int) drawerItem.getIdentifier()) {
             case MENU_ITEM_HISTORICO:
+                fragment = new HistoricoFragment();
+                alterarFragment(fragment);
                 break;
             case MENU_ITEM_MEDICAMENTOS:
+                fragment = new MedicamentosFragment();
+                alterarFragment(fragment);
                 break;
             case MENU_ITEM_SOBRE:
                 mostrarInformacoesAplicativo();

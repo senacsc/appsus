@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import sc.senac.mms.appsus.Application;
 import sc.senac.mms.appsus.entity.Historico;
 import sc.senac.mms.appsus.entity.Medicamento;
 import sc.senac.mms.appsus.manager.annotations.DatabaseSource;
@@ -58,10 +59,19 @@ public class HistoricoManager implements DataManagerInterface<Historico, Long> {
     }
 
     public List<Historico> buscarHistoricos() throws SQLException {
-        return this.getDAO().queryBuilder()
+
+        List<Historico> historicos = this.getDAO().queryBuilder()
             .orderBy("dtVisualizacao", false)
             .query();
 
+        MedicamentoManager medicamentoManager = Application.getInstance().getMedicamentoManager();
+
+        for (Historico h : historicos) {
+            Medicamento m = medicamentoManager.getDAO().queryForId(h.getMedicamento().getIdMedicamento());
+            h.setMedicamento(m);
+        }
+
+        return historicos;
     }
 
     public boolean novo(Medicamento m) throws SQLException {

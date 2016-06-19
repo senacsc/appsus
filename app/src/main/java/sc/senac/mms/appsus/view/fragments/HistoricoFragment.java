@@ -2,6 +2,7 @@ package sc.senac.mms.appsus.view.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +31,8 @@ public class HistoricoFragment extends Fragment {
         try {
 
             List<Historico> historicoList = application.getHistoricoManager().buscarHistoricos();
-            Log.d(getClass().getSimpleName(), Arrays.toString(historicoList.toArray()));
+
+
 
         } catch (SQLException e) {
             e.printStackTrace();
