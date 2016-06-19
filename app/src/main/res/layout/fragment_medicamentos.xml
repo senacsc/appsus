@@ -16,19 +16,4 @@
         android:focusable="true"
         android:scrollbars="none"/>
 
-    <xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
-        android:id="@+id/fast_scroller"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"/>
-
-    <sc.senac.mms.appsus.view.widgets.MedicamentoSectionTitleIndicator
-        android:id="@+id/fast_scroller_section_title_indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/list_item_height"
-        android:layout_toLeftOf="@id/fast_scroller"
-        android:layout_toStartOf="@id/fast_scroller"
-        app:rfs_backgroundColor="@android:color/white"
-        app:rfs_textColor="@android:color/black"/>
-
 </RelativeLayout>

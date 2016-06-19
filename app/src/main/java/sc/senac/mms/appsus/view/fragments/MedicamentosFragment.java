@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.turingtechnologies.materialscrollbar.AlphabetIndicator;
+import com.turingtechnologies.materialscrollbar.DragScrollBar;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -21,9 +23,8 @@ import sc.senac.mms.appsus.Application;
 import sc.senac.mms.appsus.R;
 import sc.senac.mms.appsus.entity.Medicamento;
 import sc.senac.mms.appsus.view.MainActivity;
+import sc.senac.mms.appsus.view.adapter.ClickListener;
 import sc.senac.mms.appsus.view.adapter.MedicamentoAdapter;
-import xyz.danoz.recyclerviewfastscroller.sectionindicator.title.SectionTitleIndicator;
-import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 public class MedicamentosFragment extends Fragment {
 
@@ -41,6 +42,8 @@ public class MedicamentosFragment extends Fragment {
         this.activity = (MainActivity) getActivity();
         this.application = (Application) this.activity.getApplication();
 
+        this.activity.setTitle("Medicamentos");
+
         /**
          * Inicia uma view de medicamentos otimizada que mostra somente os itens
          * que cabem na tela do usuário ao invés da lista inteira de medicamentos.
@@ -51,21 +54,15 @@ public class MedicamentosFragment extends Fragment {
         recyclerViewMedicamentos.setLayoutManager(new LinearLayoutManager(activity));
         recyclerViewMedicamentos.scrollToPosition(0);
 
-        VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller) fragmentView.findViewById(R.id.fast_scroller);
-        SectionTitleIndicator sectionTitleIndicator = (SectionTitleIndicator) fragmentView.findViewById(R.id.fast_scroller_section_title_indicator);
-
-        // Connect the recycler to the scroller (to let the scroller scroll the list)
-        fastScroller.setRecyclerView(recyclerViewMedicamentos);
-        fastScroller.setSectionIndicator(sectionTitleIndicator);
-
-        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
-        recyclerViewMedicamentos.addOnScrollListener(fastScroller.getOnScrollListener());
+        DragScrollBar materialScrollBar = new DragScrollBar(activity, recyclerViewMedicamentos, true);
+        materialScrollBar.setHandleColour(getResources().getColor(R.color.md_teal_400));
+        materialScrollBar.addIndicator(new AlphabetIndicator(activity), true);
 
         // Registra o adapter da lista de medicamentos
         this.medicamentoAdapter = new MedicamentoAdapter(activity.medicamentoListModel);
         this.recyclerViewMedicamentos.setAdapter(medicamentoAdapter);
 
-        medicamentoAdapter.setOnItemClickListener(new MedicamentoAdapter.ClickListener() {
+        medicamentoAdapter.setOnItemClickListener(new ClickListener() {
             @Override
             public void onItemClick(int position, View v) {
 
