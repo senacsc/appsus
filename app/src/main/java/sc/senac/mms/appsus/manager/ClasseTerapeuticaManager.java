@@ -7,6 +7,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import sc.senac.mms.appsus.entity.ClasseTerapeutica;
 import sc.senac.mms.appsus.manager.interfaces.DataManagerHelper;
@@ -53,5 +54,12 @@ public class ClasseTerapeuticaManager implements DataManagerInterface<ClasseTera
     @Override
     public Boolean OnDestroy(ConnectionSource connectionSource) throws SQLException {
         return TableUtils.dropTable(connectionSource, ClasseTerapeutica.class, true) > 0;
+    }
+
+    public List<ClasseTerapeutica> buscarClasses() throws SQLException {
+        return this.getDAO()
+            .queryBuilder()
+            .orderBy("nomeClasse", true)
+            .query();
     }
 }

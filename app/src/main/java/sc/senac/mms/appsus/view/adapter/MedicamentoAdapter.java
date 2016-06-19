@@ -4,22 +4,24 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.viethoa.RecyclerViewFastScroller;
+import android.widget.SectionIndexer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import sc.senac.mms.appsus.R;
 import sc.senac.mms.appsus.entity.Medicamento;
 import sc.senac.mms.appsus.view.adapter.holder.MedicamentoViewHolder;
 
-public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoViewHolder> implements RecyclerViewFastScroller.BubbleTextGetter{
+public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoViewHolder> implements SectionIndexer {
 
     private List<Medicamento> mMedicamentoModel;
+    private List<Object> mSections;
 
     public MedicamentoAdapter(List<Medicamento> listModel) {
         this.mMedicamentoModel = listModel;
+        updateSectionList();
     }
 
     @Override
@@ -38,7 +40,7 @@ public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoViewHold
         return mMedicamentoModel.get(position);
     }
 
-    public List<Medicamento> getItemList(){
+    public List<Medicamento> getItemList() {
         return this.mMedicamentoModel;
     }
 
@@ -47,21 +49,42 @@ public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoViewHold
         return mMedicamentoModel.size();
     }
 
+    private void updateSectionList() {
+        this.mSections = Arrays.asList(getSections());
+    }
+
     public void updateList(List<Medicamento> listModel) {
         this.mMedicamentoModel = new ArrayList<>(listModel);
         notifyDataSetChanged();
+        updateSectionList();
     }
 
     @Override
-    public String getTextToShowInBubble(int pos) {
+    public Object[] getSections() {
+        List<String> strAlphabets = new ArrayList<>();
+        for (int i = 0; i < mMedicamentoModel.size(); i++) {
+            String name = mMedicamentoModel.get(i).getDescricao();
+            if (name == null || name.trim().isEmpty())
+                continue;
+            String word = name.substring(0, 1);
+            if (!strAlphabets.contains(word)) {
+                strAlphabets.add(word);
+            }
+        }
+        return strAlphabets.toArray();
+    }
 
-        if (pos < 0 || pos >= mMedicamentoModel.size())
-            return null;
+    @Override
+    public int getPositionForSection(int sectionIndex) {
+        return 0;
+    }
 
-        String name = mMedicamentoModel.get(pos).getDescricao();
-        if (name == null || name.length() < 1)
-            return null;
-
-        return mMedicamentoModel.get(pos).getDescricao().substring(0, 1);
+    @Override
+    public int getSectionForPosition(int position) {
+        if (position >= mMedicamentoModel.size()) {
+            position = mMedicamentoModel.size() - 1;
+        }
+        Medicamento m = mMedicamentoModel.get(position);
+        return this.mSections.indexOf(Character.toString(m.getDescricao().charAt(0)));
     }
 }

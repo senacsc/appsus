@@ -2,4 +2,5 @@
     <string name="app_name">AppSUS</string>
     <string name="menu_filtro">Filtro</string>
     <string name="action_search">Pesquisar</string>
+    <string name="filtrar_por_classe">Filtrar por classe farmacológica</string>
 </resources>

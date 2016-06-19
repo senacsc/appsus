@@ -6,4 +6,6 @@
     <!-- Typografy Sizes -->
     <dimen name="h1_typo">18sp</dimen>
     <dimen name="h2_typo">16sp</dimen>
+
+    <dimen name="material_drawer_item_primary_icon_padding_right">12dp</dimen>
 </resources>

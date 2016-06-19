@@ -4,7 +4,9 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +19,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
@@ -24,8 +28,6 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
-import com.viethoa.RecyclerViewFastScroller;
-import com.viethoa.models.AlphabetItem;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -33,17 +35,23 @@ import java.util.List;
 
 import sc.senac.mms.appsus.Application;
 import sc.senac.mms.appsus.R;
+import sc.senac.mms.appsus.entity.ClasseTerapeutica;
 import sc.senac.mms.appsus.entity.Medicamento;
 import sc.senac.mms.appsus.view.adapter.MedicamentoAdapter;
+import xyz.danoz.recyclerviewfastscroller.sectionindicator.title.SectionTitleIndicator;
+import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, MenuItemCompat.OnActionExpandListener {
 
     private Application application;
     private RecyclerView recyclerViewMedicamentos;
     private List<Medicamento> medicamentoListModel;
+    private ArrayList<ClasseTerapeutica> classesTerapeuticas;
+    private List<Medicamento> filteredMedicamentoList;
     private MedicamentoAdapter medicamentoAdapter;
     private Menu mainMenu;
-    private RecyclerViewFastScroller fastScroller;
+    private ActionBar toolbar;
+    private Bundle savedInstance;
 
     // Menu identifiers
     public static Long MENU_ITEM_MEDICAMENTOS = 1L;
@@ -55,9 +63,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        this.savedInstance = savedInstanceState;
+
         // Handle Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        this.toolbar = getSupportActionBar();
+        this.classesTerapeuticas = new ArrayList<>();
 
         // Salva uma refêrencia da aplicação para auxiliar no acesso
         // dos gerenciadores dos bancos de dados
@@ -71,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
          */
         recyclerViewMedicamentos = (RecyclerView) findViewById(R.id.recyclerViewMedicamentos);
         recyclerViewMedicamentos.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewMedicamentos.scrollToPosition(0);
 
         // Iniciar o menu lateral
         result = new DrawerBuilder()
@@ -78,12 +92,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             .withToolbar(toolbar)
             .withSavedInstance(savedInstanceState)
             .withRootView(R.id.drawer_layout)
-            .withDisplayBelowStatusBar(false)
+            .withDisplayBelowStatusBar(true)
             .withTranslucentStatusBar(false)
             .withActionBarDrawerToggleAnimated(true)
             .addDrawerItems(
-                new PrimaryDrawerItem().withName("Medicamentos").withIdentifier(MENU_ITEM_MEDICAMENTOS),
-                new PrimaryDrawerItem().withName("Histórico").withIdentifier(MENU_ITEM_HISTORICO),
+                new PrimaryDrawerItem().withName("Medicamentos").withIdentifier(MENU_ITEM_MEDICAMENTOS).withIcon(R.drawable.ic_medicamento),
+                new PrimaryDrawerItem().withName("Histórico").withIdentifier(MENU_ITEM_HISTORICO).withIcon(R.drawable.ic_history_black_24dp),
                 new DividerDrawerItem(),
                 new SecondaryDrawerItem().withName("Sobre").withIdentifier(MENU_ITEM_SOBRE)
             )
@@ -100,10 +114,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         loadMedicamentoList();
 
-        fastScroller = (RecyclerViewFastScroller) findViewById(R.id.fast_scroller);
-        fastScroller.setRecyclerView(recyclerViewMedicamentos);
+        VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller) findViewById(R.id.fast_scroller);
+        SectionTitleIndicator sectionTitleIndicator = (SectionTitleIndicator) findViewById(R.id.fast_scroller_section_title_indicator);
 
-        updateAlphabetList();
+        // Connect the recycler to the scroller (to let the scroller scroll the list)
+        fastScroller.setRecyclerView(recyclerViewMedicamentos);
+        fastScroller.setSectionIndicator(sectionTitleIndicator);
+
+        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
+        recyclerViewMedicamentos.addOnScrollListener(fastScroller.getOnScrollListener());
     }
 
     private Drawer result = null;
@@ -111,6 +130,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState = result.saveInstanceState(outState);
+
+        final MenuItem item = mainMenu.findItem(R.id.search_action);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+
+        outState.putString("query", searchView.getQuery().toString());
+
         super.onSaveInstanceState(outState);
     }
 
@@ -137,14 +162,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             Log.e(this.getClass().getSimpleName(), "Failed to load medicamentos list data.", ex);
         }
 
+        filteredMedicamentoList = medicamentoListModel;
+
         // Atualiza a interface com os medicamentos
-        atualizarListaMedicamentos();
+        resetarListaMedicamentos();
     }
 
     /**
      * Atualiza a interface com a nova lista de medicamentos
      */
-    public void atualizarListaMedicamentos() {
+    public void resetarListaMedicamentos() {
         medicamentoAdapter = new MedicamentoAdapter(medicamentoListModel);
         recyclerViewMedicamentos.setAdapter(medicamentoAdapter);
     }
@@ -164,10 +191,17 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         searchView.setQueryRefinementEnabled(true);
         searchView.setQueryHint("Pesquisar...");
         searchView.setOnQueryTextListener(this);
+        searchView.setMaxWidth(Integer.MAX_VALUE);
 
         MenuItemCompat.setOnActionExpandListener(item, this);
 
         this.mainMenu = menu;
+
+        if (savedInstance != null && savedInstance.getString("query") != null && savedInstance.getString("query").length() > 0) {
+            item.expandActionView();
+            searchView.setQuery(savedInstance.getString("query"), true);
+            searchView.clearFocus();
+        }
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -193,33 +227,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      */
     @Override
     public boolean onQueryTextChange(String query) {
-        final List<Medicamento> filteredList = this.filtrarMedicamentos(medicamentoListModel, query);
-        medicamentoAdapter.updateList(filteredList);
-        updateAlphabetList();
+
+        List<Medicamento> medicamentos = filtrarMedicamentosPorDescricao(filteredMedicamentoList, query);
+        atualizarListaMedicamentos(medicamentos);
+
         return true;
-    }
-
-    public void updateAlphabetList() {
-
-        ArrayList<AlphabetItem> mAlphabetItems = new ArrayList<>();
-        List<String> strAlphabets = new ArrayList<>();
-
-        for (int i = 0; i < medicamentoAdapter.getItemList().size(); i++) {
-
-            String name = medicamentoAdapter.getItem(i).getDescricao();
-
-            if (name == null || name.trim().isEmpty())
-                continue;
-
-            String word = name.substring(0, 1);
-
-            if (!strAlphabets.contains(word)) {
-                strAlphabets.add(word);
-                mAlphabetItems.add(new AlphabetItem(i, word, false));
-            }
-        }
-
-        fastScroller.setUpAlphabet(mAlphabetItems);
     }
 
     /**
@@ -229,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      * @param query     Texto da pesquisa
      * @return Lista com os medicamentos fitrados
      */
-    private List<Medicamento> filtrarMedicamentos(List<Medicamento> listModel, String query) {
+    private List<Medicamento> filtrarMedicamentosPorDescricao(List<Medicamento> listModel, String query) {
 
         // Cria uma nova lista para os medicamentos filtrados
         final List<Medicamento> medicamentosFiltrados = new ArrayList<>();
@@ -258,6 +270,20 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         return medicamentosFiltrados;
     }
 
+    private List<Medicamento> filtrarMedicamentosPorClasse(List<Medicamento> medicamentos, ArrayList<ClasseTerapeutica> classes) {
+        final List<Medicamento> medicamentosFiltrados = new ArrayList<>();
+        for (Medicamento m : medicamentos) {
+            if (classes.contains(m.getClasseTerapeutica())) {
+                medicamentosFiltrados.add(m);
+            }
+        }
+        return medicamentosFiltrados;
+    }
+
+    private void atualizarListaMedicamentos(List<Medicamento> medicamentos) {
+        this.medicamentoAdapter.updateList(medicamentos);
+    }
+
     // ignored
     @Override
     public boolean onQueryTextSubmit(String query) {
@@ -273,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onMenuItemActionExpand(MenuItem item) {
         result.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        toolbar.setDisplayHomeAsUpEnabled(false);
         return true;
     }
 
@@ -285,9 +311,76 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      */
     @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
-        medicamentoAdapter.updateList(medicamentoListModel);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        atualizarListaMedicamentos(filteredMedicamentoList);
+        toolbar.setDisplayHomeAsUpEnabled(false);
         result.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
         return true;
+    }
+
+    private void abrirModalSelecionarClasse() {
+
+        final ArrayList<ClasseTerapeutica> listClasses = new ArrayList<>();
+
+        try {
+            listClasses.addAll(application.getClasseTerapeuticaManager().buscarClasses());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        new MaterialDialog.Builder(this)
+            .title("Filtrar por Classe Farmacológica")
+            .items(listClasses)
+            .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
+                @Override
+                public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
+                    ArrayList<ClasseTerapeutica> classes = new ArrayList<>();
+                    for (Integer aWhich : which) {
+                        classes.add(listClasses.get(aWhich));
+                    }
+                    classesTerapeuticas = classes;
+                    return true;
+                }
+            })
+            .neutralText("Limpar")
+            .negativeText("Cancelar")
+            .positiveText("Filtrar")
+            .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    classesTerapeuticas = new ArrayList<>();
+                }
+            })
+            .onAny(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                    List<Medicamento> medicamentos = medicamentoListModel;
+
+                    if (classesTerapeuticas.size() > 0) {
+                        medicamentos = filtrarMedicamentosPorClasse(medicamentos, classesTerapeuticas);
+                        filteredMedicamentoList = medicamentos;
+                    } else {
+                        filteredMedicamentoList = medicamentoListModel;
+                    }
+
+                    final MenuItem item = mainMenu.findItem(R.id.search_action);
+                    final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+
+                    medicamentos = filtrarMedicamentosPorDescricao(medicamentos, searchView.getQuery().toString());
+                    atualizarListaMedicamentos(medicamentos);
+                }
+            })
+            .show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.filter_action:
+                abrirModalSelecionarClasse();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

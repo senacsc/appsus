@@ -10,9 +10,9 @@
         app:showAsAction="ifRoom|collapseActionView" />
 
     <item
-        android:id="@+id/action_bar"
+        android:id="@+id/filter_action"
         android:icon="@drawable/ic_filter_list_white_24dp"
-        android:title="Filtrar"
+        android:title="@string/filtrar_por_classe"
         app:showAsAction="ifRoom|collapseActionView"/>
 
 </menu>
