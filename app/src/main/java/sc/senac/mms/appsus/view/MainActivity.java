@@ -437,7 +437,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     .append("Desenvolvimento de Sistemas da faculdade SENAC de Florianópolis - SC.<br/><br/>")
                     .append("<b>Integrantes:</b> <br/><br/>")
                     .append("Matheus Vitória Garcez<br/>")
-                    .append("Milton Andrade Junior")
+                    .append("Milton Rodrigues Junior")
                     .toString()
                 )
             )
