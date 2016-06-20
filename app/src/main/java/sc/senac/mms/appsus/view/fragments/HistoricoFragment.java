@@ -1,15 +1,17 @@
 package sc.senac.mms.appsus.view.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -18,6 +20,7 @@ import sc.senac.mms.appsus.Application;
 import sc.senac.mms.appsus.R;
 import sc.senac.mms.appsus.entity.Historico;
 import sc.senac.mms.appsus.view.MainActivity;
+import sc.senac.mms.appsus.view.adapter.ClickListener;
 import sc.senac.mms.appsus.view.adapter.HistoricoAdapter;
 
 public class HistoricoFragment extends Fragment {
@@ -50,6 +53,39 @@ public class HistoricoFragment extends Fragment {
 
         historicoAdapter = new HistoricoAdapter(historicosListModel);
         recyclerViewHistorico.setAdapter(historicoAdapter);
+
+        historicoAdapter.setOnItemClickListener(new ClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+
+                Historico h = historicoAdapter.getItem(position);
+
+                MaterialDialog dialog = new MaterialDialog.Builder(activity)
+                    .title(h.getMedicamento().getDescricao())
+                    .customView(R.layout.medicamento_dialog, true)
+                    .positiveText(getString(R.string.fechar))
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                        }
+                    }).build();
+
+                @SuppressWarnings("ConstantConditions")
+                TextView classeTextView = (TextView) dialog.getCustomView().findViewById(R.id.classeTerapeuticaLabel);
+                classeTextView.setText(h.getMedicamento().getClasseTerapeutica().getNome());
+
+                TextView formaTextView = (TextView) dialog.getCustomView().findViewById(R.id.formaApresentacaoLabel);
+                formaTextView.setText(h.getMedicamento().getFormaApresentacao());
+
+                dialog.show();
+            }
+
+            @Override
+            public boolean onItemLongClick(int position, View v) {
+                return true;
+            }
+        });
 
         return fragmentView;
     }

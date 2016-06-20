@@ -8,13 +8,17 @@ android {
         javaMaxHeapSize "4g" //specify the heap size for the dex process
     }
 
+    lintOptions {
+        abortOnError false
+    }
+
     defaultConfig {
         applicationId "sc.senac.mms.appsus"
         minSdkVersion 19
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
-        multiDexEnabled true
+        multiDexEnabled false
     }
     buildTypes {
         release {
@@ -40,11 +44,10 @@ dependencies {
     // External Libraries
     compile group: 'com.j256.ormlite', name: 'ormlite-android', version: '4.48'
 
+    compile 'com.turingtechnologies.materialscrollbar:lib:10.+'
+    compile 'com.afollestad.material-dialogs:core:0.8.5.9'
     compile('com.mikepenz:materialdrawer:5.3.1@aar') {
         transitive = true
     }
-
-    compile 'com.turingtechnologies.materialscrollbar:lib:10.+'
-    compile 'com.afollestad.material-dialogs:core:0.8.5.9'
 
 }
