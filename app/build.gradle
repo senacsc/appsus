@@ -8,13 +8,17 @@ android {
         javaMaxHeapSize "4g" //specify the heap size for the dex process
     }
 
+    lintOptions {
+        abortOnError false
+    }
+
     defaultConfig {
         applicationId "sc.senac.mms.appsus"
         minSdkVersion 19
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
-        multiDexEnabled true
+        multiDexEnabled false
     }
     buildTypes {
         release {
@@ -29,21 +33,21 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     // Support Libraries
+    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:design:23.4.0'
+    compile 'com.android.support:recyclerview-v7:23.4.0'
 
     // Custom Libraries
+    compile 'com.github.senacsc:android-sqlite-asset-helper:2.0.2'
 
     // External Libraries
     compile group: 'com.j256.ormlite', name: 'ormlite-android', version: '4.48'
 
+    compile 'com.turingtechnologies.materialscrollbar:lib:10.+'
+    compile 'com.afollestad.material-dialogs:core:0.8.5.9'
     compile('com.mikepenz:materialdrawer:5.3.1@aar') {
         transitive = true
     }
 
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.android.support:design:23.4.0'
-    compile 'com.android.support:recyclerview-v7:23.4.0'
-    compile 'com.github.senacsc:android-sqlite-asset-helper:2.0.2'
-    compile 'xyz.danoz:recyclerviewfastscroller:0.1.3'
-    compile 'com.afollestad.material-dialogs:core:0.8.5.9'
-    compile 'com.android.support:support-v4:23.4.0'
 }

@@ -45,8 +45,8 @@ public class ClasseTerapeuticaManager implements DataManagerInterface<ClasseTera
     @Override
     public Boolean OnUpgrade(Integer oldVersion, Integer newVersion) throws SQLException {
         Log.i(getClass().getSimpleName(), "upgrading table 'classeTerapeutica'");
-        this.OnDestroy();
-        this.OnCreate();
+        //this.OnDestroy();
+        //this.OnCreate();
         return true;
     }
 

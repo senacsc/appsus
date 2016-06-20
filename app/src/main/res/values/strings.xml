@@ -10,4 +10,12 @@
     <string name="classe_terapeutica">Classe terapeutica</string>
     <string name="forma_de_apresentacao">Forma de apresentação</string>
     <string name="separator">-</string>
+    <string name="lista_medicamentos">Lista de medicamentos</string>
+    <string name="historico">Histórico</string>
+    <string name="sobre">Sobre</string>
+    <string name="pesquisar">Pesquisar...</string>
+    <string name="filtro_dialog_title">Filtrar por Classe Farmacológica</string>
+    <string name="limpar">Limpar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="filtrar">Filtrar</string>
 </resources>
