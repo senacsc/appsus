@@ -8,7 +8,7 @@ Aplicativo desenvolvido como trabalho de conclusão de semestre do curso de Aná
 
 ## Integrantes
 - Matheus Vitória Garcez
-- Milton Andrade Junior
+- Milton Rodrigues Junior
 
 ### Orientador
 Fernando de Lucca Siqueira
