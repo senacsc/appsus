@@ -348,10 +348,23 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             e.printStackTrace();
         }
 
+        List<Integer> classesSelecionadas = new ArrayList<>();
+
+        for (int i = 0; i < listClasses.size(); i++) {
+            if (classesTerapeuticas.contains(listClasses.get(i))) {
+                classesSelecionadas.add(i);
+            }
+        }
+
+        Integer[] selecionados = new Integer[classesSelecionadas.size()];
+        for (int i = 0; i < classesSelecionadas.size(); i++) {
+            selecionados[i] = classesSelecionadas.get(i);
+        }
+
         new MaterialDialog.Builder(this)
             .title(R.string.filtro_dialog_title)
             .items(listClasses)
-            .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
+            .itemsCallbackMultiChoice(selecionados, new MaterialDialog.ListCallbackMultiChoice() {
                 @Override
                 public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
                     ArrayList<ClasseTerapeutica> classes = new ArrayList<>();

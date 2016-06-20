@@ -46,8 +46,8 @@ public class MedicamentoManager implements DataManagerInterface<Medicamento, Lon
     @Override
     public Boolean OnUpgrade(Integer oldVersion, Integer newVersion) throws SQLException {
         Log.i(getClass().getSimpleName(), "upgrading table 'medicamento'");
-        this.OnDestroy();
-        this.OnCreate();
+        //this.OnDestroy();
+        //this.OnCreate();
         return true;
     }
 

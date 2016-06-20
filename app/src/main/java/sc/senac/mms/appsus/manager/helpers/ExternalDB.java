@@ -14,7 +14,7 @@ import sc.senac.mms.appsus.manager.interfaces.DataManagerHelper;
 
 public class ExternalDB extends PortableSQLiteHelper implements DataManagerHelper {
 
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DEFAULT_DATABASE = "medicamentos.db";
 
     private DataManager dataManager;
