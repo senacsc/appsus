@@ -5,4 +5,11 @@
 [![Build Status](https://travis-ci.org/senacsc/appsus.svg?branch=master)](https://travis-ci.org/senacsc/appsus)
 [![Dependency Status](https://www.versioneye.com/user/projects/574eebfae298f3003798c90b/badge.svg)](https://www.versioneye.com/user/projects/574eebfae298f3003798c90b)
 
-TCS 2014/1 - Equipe MM's
+Aplicativo desenvolvido como trabalho de conclusão de semestre do curso de Análise e Desenvolvimento de Sistemas da faculdade SENAC de Florianópolis - SC.
+
+## Integrantes
+- Matheus Vitória Garcez
+- Milton Andrade Junior
+
+### Orientador
+Fernando de Lucca Siqueira
