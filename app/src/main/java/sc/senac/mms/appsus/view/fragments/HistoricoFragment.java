@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -48,6 +49,7 @@ public class HistoricoFragment extends Fragment {
         try {
             historicosListModel = application.getHistoricoManager().buscarHistoricos();
         } catch (SQLException e) {
+            FirebaseCrash.report(e);
             e.printStackTrace();
         }
 
