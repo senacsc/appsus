@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      * @param query     Texto da pesquisa
      * @return Lista com os medicamentos fitrados
      */
-    private List<Medicamento> filtrarMedicamentosPorDescricao(List<Medicamento> listModel, String query) {
+    public List<Medicamento> filtrarMedicamentosPorDescricao(List<Medicamento> listModel, String query) {
 
         // Cria uma nova lista para os medicamentos filtrados
         final List<Medicamento> medicamentosFiltrados = new ArrayList<>();
@@ -297,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         return medicamentosFiltrados;
     }
 
-    private List<Medicamento> filtrarMedicamentosPorClasse(List<Medicamento> medicamentos, List<ClasseTerapeutica> classes) {
+    public List<Medicamento> filtrarMedicamentosPorClasse(List<Medicamento> medicamentos, List<ClasseTerapeutica> classes) {
         final List<Medicamento> medicamentosFiltrados = new ArrayList<>();
         for (Medicamento m : medicamentos) {
             if (classes.contains(m.getClasseTerapeutica())) {
@@ -453,6 +453,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     .append("<b>Integrantes:</b> <br/><br/>")
                     .append("Matheus Vitória Garcez<br/>")
                     .append("Milton Rodrigues Junior")
+                    .append("Maurélio Cesar Pereira")
                     .toString()
                 )
             )
