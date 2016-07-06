@@ -2,6 +2,7 @@ package sc.senac.mms.appsus.manager;
 
 import android.util.Log;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.table.TableUtils;
 
@@ -25,6 +26,7 @@ public class ClasseTerapeuticaManager implements DataManagerInterface<ClasseTera
         try {
             this.dao = getDAO();
         } catch (SQLException e) {
+            FirebaseCrash.report(e);
             e.printStackTrace();
         }
     }

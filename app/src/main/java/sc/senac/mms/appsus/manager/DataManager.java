@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.j256.ormlite.support.ConnectionSource;
 
 import java.io.InvalidClassException;
@@ -40,6 +41,7 @@ public class DataManager {
 
     public void register(Class<? extends DataManagerInterface> dataManager) {
         try {
+
             if (!dataManager.isAnnotationPresent(DatabaseSource.class)) {
                 throw new InvalidClassException("Invalid data manager");
             }
@@ -51,14 +53,18 @@ public class DataManager {
             managers.put(dataManager.getSimpleName(), dataManager.getConstructor(DataManagerHelper.class).newInstance(helper));
 
             Log.d(getClass().getSimpleName(), dataManager.getSimpleName() + " registered and binded to '" + helperAnnotation.ref().getName() + "' class.");
+
         } catch (InstantiationException | IllegalAccessException e) {
-            Log.e(getClass().getSimpleName(), "Failed to register " + dataManager.getSimpleName() + " manager.", e);
+            FirebaseCrash.report(e);
+            FirebaseCrash.logcat(Log.ERROR, getClass().getSimpleName(), "Failed to register " + dataManager.getSimpleName() + " manager.");
         } catch (InvalidClassException e) {
-            Log.e(getClass().getSimpleName(), "Failed to register " + dataManager.getSimpleName() + " manager, missing DatabaseSource annotation.", e);
+            FirebaseCrash.report(e);
+            FirebaseCrash.logcat(Log.ERROR, getClass().getSimpleName(), "Failed to register " + dataManager.getSimpleName() + " manager, missing DatabaseSource annotation.");
         } catch (InvocationTargetException e) {
-            Log.e(getClass().getSimpleName(), "Failed to register " + dataManager.getSimpleName() + " manager, initialization error.", e.getTargetException());
+            FirebaseCrash.report(e.getTargetException());
+            FirebaseCrash.logcat(Log.ERROR, getClass().getSimpleName(), "Failed to register " + dataManager.getSimpleName() + " manager, initialization error.");
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            FirebaseCrash.report(e);
         }
     }
 
@@ -71,6 +77,7 @@ public class DataManager {
             try {
                 dataManager.getValue().OnCreate();
             } catch (java.sql.SQLException e) {
+                FirebaseCrash.report(e);
                 Toast.makeText(context, "Failed to create " + dataManager.getKey() + " database.", Toast.LENGTH_SHORT).show();
             }
         }
@@ -81,7 +88,7 @@ public class DataManager {
             try {
                 dataManager.getValue().OnUpgrade(oldVersion, newVersion);
             } catch (java.sql.SQLException e) {
-                e.printStackTrace();
+                FirebaseCrash.report(e);
                 Toast.makeText(context, "Failed to upgrade " + dataManager.getKey() + " database.", Toast.LENGTH_SHORT).show();
             }
         }
@@ -92,6 +99,7 @@ public class DataManager {
             try {
                 dataManager.getValue().OnDestroy();
             } catch (java.sql.SQLException e) {
+                FirebaseCrash.report(e);
                 Toast.makeText(context, "Failed to delete " + dataManager.getKey() + " database.", Toast.LENGTH_SHORT).show();
             }
         }

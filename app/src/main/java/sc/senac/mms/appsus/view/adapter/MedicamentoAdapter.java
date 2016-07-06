@@ -25,7 +25,12 @@ public class MedicamentoAdapter extends RecyclerView.Adapter<MedicamentoViewHold
 
     @Override
     public Character getCharacterForElement(int element) {
-        return this.getItem(element).getDescricao().charAt(0);
+        if (element > -1) {
+            return this.getItem(element).getDescricao().charAt(0);
+        }
+        else {
+            return 'A';
+        }
     }
 
     public MedicamentoAdapter(List<Medicamento> listModel) {

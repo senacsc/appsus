@@ -22,6 +22,8 @@ import android.view.View;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crash.FirebaseCrash;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
@@ -52,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private ActionBar toolbar;
     public Menu mainMenu;
 
+    public FirebaseAnalytics mFirebaseAnalytics;
+
     // Menu identifiers
     public static final int MENU_ITEM_MEDICAMENTOS = 1;
     public static final int MENU_ITEM_HISTORICO = 2;
@@ -60,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         setContentView(R.layout.activity_main);
 
         // Altera o menu do aplicativo para um customizado
@@ -124,11 +129,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     protected void onSaveInstanceState(Bundle outState) {
 
-        outState = menuLateral.saveInstanceState(outState);
+        FirebaseCrash.log("Saving application state");
 
         final MenuItem item = mainMenu.findItem(R.id.search_action);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
 
+        outState = menuLateral.saveInstanceState(outState);
         outState.putString("query", searchView.getQuery().toString());
 
         super.onSaveInstanceState(outState);
@@ -161,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             medicamentoListModel = this.application.getMedicamentoManager().buscarMedicamentos();
         } catch (SQLException ex) {
             medicamentoListModel = new ArrayList<>();
+            FirebaseCrash.report(ex);
             Log.e(this.getClass().getSimpleName(), "Failed to load medicamentos list data.", ex);
         }
 
@@ -202,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         if (savedInstance != null) {
             String query = savedInstance.getString("query");
             if (query != null && query.length() > 0) {
+                FirebaseCrash.log("Restauring search query");
                 item.expandActionView();
                 searchView.setQuery(savedInstance.getString("query"), true);
                 searchView.clearFocus();
@@ -219,6 +227,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     protected void onNewIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+
+            FirebaseCrash.log("SearchView submit event");
 
             final String query = intent.getStringExtra(SearchManager.QUERY);
             final MenuItem item = mainMenu.findItem(R.id.search_action);
@@ -240,7 +250,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         List<Medicamento> medicamentos = filtrarMedicamentosPorDescricao(filteredMedicamentoList, query);
 
         Fragment fragment = this.getFragmentAtual();
-
         if (fragment instanceof MedicamentosFragment) {
             ((MedicamentosFragment) fragment).atualizarListaMedicamentos(medicamentos);
         }
@@ -259,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      * @param query     Texto da pesquisa
      * @return Lista com os medicamentos fitrados
      */
-    private List<Medicamento> filtrarMedicamentosPorDescricao(List<Medicamento> listModel, String query) {
+    public List<Medicamento> filtrarMedicamentosPorDescricao(List<Medicamento> listModel, String query) {
 
         // Cria uma nova lista para os medicamentos filtrados
         final List<Medicamento> medicamentosFiltrados = new ArrayList<>();
@@ -288,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         return medicamentosFiltrados;
     }
 
-    private List<Medicamento> filtrarMedicamentosPorClasse(List<Medicamento> medicamentos, List<ClasseTerapeutica> classes) {
+    public List<Medicamento> filtrarMedicamentosPorClasse(List<Medicamento> medicamentos, List<ClasseTerapeutica> classes) {
         final List<Medicamento> medicamentosFiltrados = new ArrayList<>();
         for (Medicamento m : medicamentos) {
             if (classes.contains(m.getClasseTerapeutica())) {
@@ -340,11 +349,17 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     private void abrirModalSelecionarClasse() {
 
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "0");
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "show_classes_modal");
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
         final ArrayList<ClasseTerapeutica> listClasses = new ArrayList<>();
 
         try {
             listClasses.addAll(application.getClasseTerapeuticaManager().buscarClasses());
         } catch (SQLException e) {
+            FirebaseCrash.report(e);
             e.printStackTrace();
         }
 
@@ -438,6 +453,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     .append("<b>Integrantes:</b> <br/><br/>")
                     .append("Matheus Vitória Garcez<br/>")
                     .append("Milton Rodrigues Junior")
+                    .append("Maurélio Cesar Pereira")
                     .toString()
                 )
             )
@@ -449,7 +465,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
 
         drawerItem.withSetSelected(false);
-
         Fragment fragment;
 
         switch ((int) drawerItem.getIdentifier()) {

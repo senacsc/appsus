@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crash.FirebaseCrash;
 import com.turingtechnologies.materialscrollbar.AlphabetIndicator;
 import com.turingtechnologies.materialscrollbar.DragScrollBar;
 
@@ -68,6 +70,12 @@ public class MedicamentosFragment extends Fragment {
 
                 Medicamento m = medicamentoAdapter.getItem(position);
 
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "0");
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "show_medicamento");
+                bundle.putString(FirebaseAnalytics.Param.VALUE, m.getIdMedicamento().toString());
+                activity.mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle);
+
                 MaterialDialog dialog = new MaterialDialog.Builder(activity)
                     .title(m.getDescricao())
                     .customView(R.layout.medicamento_dialog, true)
@@ -89,6 +97,7 @@ public class MedicamentosFragment extends Fragment {
                 try {
                     application.getHistoricoManager().novo(m);
                 } catch (SQLException e) {
+                    FirebaseCrash.report(e);
                     Log.e(MainActivity.class.getSimpleName(), "Erro ao adicionar um histórico para o medicamento " + m.getIdMedicamento(), e);
                 }
 

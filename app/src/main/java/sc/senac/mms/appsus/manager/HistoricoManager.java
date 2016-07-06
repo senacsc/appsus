@@ -2,6 +2,7 @@ package sc.senac.mms.appsus.manager;
 
 import android.util.Log;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.table.TableUtils;
 
@@ -28,6 +29,7 @@ public class HistoricoManager implements DataManagerInterface<Historico, Long> {
         try {
             this.dao = getDAO();
         } catch (SQLException e) {
+            FirebaseCrash.report(e);
             e.printStackTrace();
         }
     }
@@ -48,8 +50,6 @@ public class HistoricoManager implements DataManagerInterface<Historico, Long> {
     @Override
     public Boolean OnUpgrade(Integer oldVersion, Integer newVersion) throws SQLException {
         Log.i(getClass().getSimpleName(), "upgrading table 'historico'");
-        this.OnDestroy();
-        this.OnCreate();
         return true;
     }
 

@@ -3,6 +3,7 @@ package sc.senac.mms.appsus.manager.helpers;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.j256.ormlite.support.ConnectionSource;
 
 import java.sql.SQLException;
@@ -42,6 +43,7 @@ public class ExternalDB extends PortableSQLiteHelper implements DataManagerHelpe
             Application.getInstance().getMedicamentoManager().OnUpgrade(oldVersion, newVersion);
             Application.getInstance().getClasseTerapeuticaManager().OnUpgrade(oldVersion, newVersion);
         } catch (SQLException e) {
+            FirebaseCrash.report(e);
             e.printStackTrace();
         }
     }

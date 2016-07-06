@@ -3,6 +3,7 @@ package sc.senac.mms.appsus.manager.helpers;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 
@@ -38,6 +39,7 @@ public class AndroidDB extends OrmLiteSqliteOpenHelper implements DataManagerHel
         try {
             Application.getInstance().getHistoricoManager().OnCreate();
         } catch (SQLException e) {
+            FirebaseCrash.report(e);
             e.printStackTrace();
         }
     }
@@ -47,6 +49,7 @@ public class AndroidDB extends OrmLiteSqliteOpenHelper implements DataManagerHel
         try {
             Application.getInstance().getHistoricoManager().OnCreate();
         } catch (SQLException e) {
+            FirebaseCrash.report(e);
             e.printStackTrace();
         }
     }
