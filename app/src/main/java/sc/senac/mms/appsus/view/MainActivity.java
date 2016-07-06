@@ -284,11 +284,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             // Remove espaços em branco e converte as letras para minúsculo
             // dos dados do medicamento
             String descricao = m.getDescricao().trim().toLowerCase();
-            String formaApresentacao = m.getFormaApresentacao().trim().toLowerCase();
 
             // Verifica se a descrição ou forma de apresentação
             // contém a sequência de caracteres da pesquisa
-            if (descricao.contains(searchQuery) || formaApresentacao.contains(searchQuery)) {
+            if (descricao.contains(searchQuery)) {
                 medicamentosFiltrados.add(m);
             }
         }
